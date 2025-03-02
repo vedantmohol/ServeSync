@@ -1,5 +1,6 @@
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
+import { errorHandler } from "../utils/error.js";
 // import jwt from "jsonwebtoken";
 
 export const signUp = async(req,res) =>{
@@ -7,17 +8,17 @@ export const signUp = async(req,res) =>{
         const {username, email, password, role, phone, hotelId} = req.body;
 
         if(role !== "customer" && !hotelId){
-            return res.status(400).json({message: "Hotel ID is required for staff roles"});
+            return next(errorHandler(400,"Hotel ID is required for staff roles"));
         }
 
         if(!username || !email || !password || !phone || username==='' || email==='' || password==='' || phone==='')
         {
-            return res.status(400).json({message: 'All fields are required'});
+            return next(errorHandler(400,'All fields are required'));
         }
 
         const existingUser = await User.findOne({ email });
         if(existingUser){
-            return res.status(400).json({ message: "User already exists." });
+            return next(errorHandler(400, "User already exists."));
         }
     
         const newUser = new User({ 
@@ -33,6 +34,6 @@ export const signUp = async(req,res) =>{
         res.status(201).json({ message: "User registered successfully." });
 
     }catch(error){
-        res.status(500).json({ message: "Internal Server Error." });
+        next(errorHandler(500, "Internal Server Error."));
     }
 }
