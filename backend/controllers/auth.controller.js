@@ -5,29 +5,25 @@ import { errorHandler } from "../utils/error.js";
 
 export const signUp = async(req,res) =>{
     try{
-        const {username, email, password, role, phone, hotelId} = req.body;
+        const {username, phone, email, password} = req.body;
 
-        if(role !== "customer" && !hotelId){
-            return next(errorHandler(400,"Hotel ID is required for staff roles"));
-        }
-
-        if(!username || !email || !password || !phone || username==='' || email==='' || password==='' || phone==='')
+        if(!username || !password || !phone || username==='' || password==='' || phone==='')
         {
             return next(errorHandler(400,'All fields are required'));
         }
 
-        const existingUser = await User.findOne({ email });
+        const existingUser = await User.findOne({ phone });
         if(existingUser){
             return next(errorHandler(400, "User already exists."));
         }
     
         const newUser = new User({ 
             username, 
-            email, 
-            password, 
             phone, 
-            role, 
-            hotelId: role === "customer" ? null : hotelId 
+            email : email || null, 
+            password, 
+            role: "customer", 
+            hotelId: null,
         });
         await newUser.save();
     
