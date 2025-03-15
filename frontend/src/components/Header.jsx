@@ -3,6 +3,7 @@ import { FaLeaf, FaDrumstickBite } from "react-icons/fa";
 import React, { useState } from "react";
 import { Avatar, Button, Dropdown, Navbar, TextInput } from "flowbite-react";
 import { Link } from "react-router-dom";
+import ServeSyncLogo from "../assets/ServeSyncLogo.png";
 
 function Header() {
   const [vegMode, setVegMode] = useState(true);
@@ -12,9 +13,9 @@ function Header() {
     <Navbar className="bg-purple-800 text-white border-b-2 flex flex-wrap justify-between items-center p-4">
       <Link to="/" className="flex items-center">
         <img
-          src="./assets/ServeSyncLogo.png"
+          src={ServeSyncLogo}
           alt="ServeSync Logo"
-          className="w-auto h-12"
+          className="w-auto h-12 rounded-xl"
         />
       </Link>
 

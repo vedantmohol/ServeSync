@@ -1,6 +1,9 @@
 import { Alert, Button, Label, Spinner, TextInput } from "flowbite-react";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import OAuth from "../components/OAuth";
+import ServeSyncLogo from "../assets/ServeSyncLogo.png";
+
 
 function SignUp() {
   const [formData, setFormData] = useState({});
@@ -50,9 +53,9 @@ function SignUp() {
         <div className="flex-1">
           <Link to="/" className="flex items-center">
             <img
-              src="./assets/ServeSyncLogo.png"
+              src={ServeSyncLogo}
               alt="ServeSync Logo"
-              className="w-auto h-12"
+              className="w-auto h-16 rounded-xl"
             />
           </Link>
           <p className="text-sm mt-5">
@@ -114,6 +117,7 @@ function SignUp() {
                 "Sign Up"
               )}
             </Button>
+            <OAuth/>
           </form>
           <div className="flex gap-2 mt-5 text-sm">
             <span>Already Have an account?</span>

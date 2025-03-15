@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { signInFailure, signInStart, signInSuccess } from "../redux/user/userSlice";
+import OAuth from "../components/OAuth";
+import ServeSyncLogo from "../assets/ServeSyncLogo.png";
 
 function SignIn() {
   const [formData, setFormData] = useState({
@@ -39,7 +41,10 @@ function SignIn() {
       const data = await res.json();
       if (data.success === false) {
          dispatch(signInFailure(data.message));
+         return;
       }
+
+      dispatch(signInSuccess(data));
 
         switch (data.role) {
           case "customer":
@@ -64,18 +69,19 @@ function SignIn() {
         
     } catch (error) {
       dispatch(signInFailure(error.message));
+      return;
     }
   };
 
   return (
     <div className="min-h-screen mt-20">
-      <div className="flex p-3 max-w-3xl mx-auto flex-xol md:flex-row md:items-center gap-4">
+      <div className="flex p-3 max-w-3xl mx-auto flex-col md:flex-row md:items-center gap-4">
         <div className="flex-1">
           <Link to="/" className="flex items-center">
             <img
-              src="./assets/ServeSyncLogo.png"
+              src={ServeSyncLogo}
               alt="ServeSync Logo"
-              className="w-auto h-12"
+              className="w-auto h-16 rounded-xl"
             />
           </Link>
           <p className="text-sm mt-5">
@@ -125,6 +131,7 @@ function SignIn() {
                     type="text"
                     placeholder="Enter Staff ID"
                     id="staffId"
+                    value={formData.staffId}
                     onChange={handleChange}
                     required
                   />
@@ -146,6 +153,7 @@ function SignIn() {
                 "Sign In"
               )}
             </Button>
+            <OAuth/>
           </form>
 
           <div className="flex gap-2 mt-5 text-sm">
