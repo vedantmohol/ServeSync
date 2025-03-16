@@ -4,10 +4,12 @@ import React, { useState } from "react";
 import { Avatar, Button, Dropdown, Navbar, TextInput } from "flowbite-react";
 import { Link } from "react-router-dom";
 import ServeSyncLogo from "../assets/ServeSyncLogo.png";
+import { useSelector } from 'react-redux';
 
 function Header() {
   const [vegMode, setVegMode] = useState(true);
-  const currentUser = null;
+  const {currentUser} = useSelector(state => state.user);
+
 
   return (
     <Navbar className="bg-purple-800 text-white border-b-2 flex flex-wrap justify-between items-center p-4">
@@ -59,7 +61,7 @@ function Header() {
             arrowIcon={false}
             inline
             label={
-              <Avatar alt="User" img={currentUser.profilePicture} rounded />
+              <Avatar alt="user" img={currentUser.profilePicture} rounded />
             }
           >
             <Dropdown.Header>
@@ -68,7 +70,7 @@ function Header() {
                 {currentUser.email}
               </span>
             </Dropdown.Header>
-            <Link to="/profile">
+            <Link to={'/dashboard?tab=profile'}>
               <Dropdown.Item>Profile</Dropdown.Item>
             </Link>
             <Dropdown.Divider />

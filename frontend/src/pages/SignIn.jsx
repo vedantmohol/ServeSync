@@ -14,7 +14,7 @@ function SignIn() {
     role: "",
   });
 
-  const {loading, error: errorMessage} = useSelector(state => state.user);
+  const {loading, error: errorMessage} = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -41,35 +41,35 @@ function SignIn() {
       const data = await res.json();
       if (data.success === false) {
          dispatch(signInFailure(data.message));
-         return;
       }
 
-      dispatch(signInSuccess(data));
 
-        switch (data.role) {
-          case "customer":
-            navigate("/");
-            break;
-          case "chef":
-            navigate("/chef-dashboard");
-            break;
-          case "waiter":
-            navigate("/waiter-dashboard");
-            break;
-          case "hall_manager":
-            navigate("/hall-manager-dashboard");
-            break;
-          case "hotel_admin":
-            navigate("/admin-dashboard");
-            break;
-          default:
-            navigate("/");
-            break;
-        }
+      if(res.ok){
+        dispatch(signInSuccess(data));
+          switch (data.role) {
+            case "customer":
+              navigate("/");
+              break;
+            case "chef":
+              navigate("/chef-dashboard");
+              break;
+            case "waiter":
+              navigate("/waiter-dashboard");
+              break;
+            case "hall_manager":
+              navigate("/hall-manager-dashboard");
+              break;
+            case "hotel_admin":
+              navigate("/admin-dashboard");
+              break;
+            default:
+              navigate("/");
+              break;
+          }
+      }
         
     } catch (error) {
       dispatch(signInFailure(error.message));
-      return;
     }
   };
 
@@ -142,15 +142,15 @@ function SignIn() {
             <Button
               gradientDuoTone="purpleToPink"
               type="submit"
-              disabled={loading}
+              // disabled={loading}
             >
-              {loading ? (
+              {loading ?  (
+                "Sign In"
+              ) : (
                 <>
                   <Spinner size="sm" />
                   <span className="pl-3">Loading...</span>
                 </>
-              ) : (
-                "Sign In"
               )}
             </Button>
             <OAuth/>
