@@ -10,7 +10,9 @@ function DashSidebar() {
     useEffect(()=>{
         const urlParams = new URLSearchParams(location.search);
         const tabFromUrl = urlParams.get('tab');
+       if(tabFromUrl){
         setTab(tabFromUrl);
+       }
     },[location.search]);
 
   return (
@@ -18,13 +20,13 @@ function DashSidebar() {
         <Sidebar.Items>
             <Sidebar.ItemGroup>
                 <Link to="/dashboard?tab=profile">
-                <Sidebar.Item active={tab === '/profile'} icon={HiUser} label='User' labelColor="dark">Profile</Sidebar.Item>
+                <Sidebar.Item active={tab === 'profile'} icon={HiUser} label='User' labelColor="dark">Profile</Sidebar.Item>
                 </Link>
-                <Sidebar.Item icon={HiArrowSmRight} classname="cursor-pointer">SignOut</Sidebar.Item>
+                <Sidebar.Item icon={HiArrowSmRight} className="cursor-pointer">SignOut</Sidebar.Item>
             </Sidebar.ItemGroup>
         </Sidebar.Items>
     </Sidebar>
-  )
+  );
 }
 
 export default DashSidebar
