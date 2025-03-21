@@ -6,11 +6,11 @@ import { initializeApp } from "firebase/app";
 // Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: "servesync-508c1.firebaseapp.com",
-  projectId: "servesync-508c1",
-  storageBucket: "servesync-508c1.firebasestorage.app",
-  messagingSenderId: "863344842651",
-  appId: "1:863344842651:web:371ac0b41c68c974c8333e"
+  authDomain: "blog-vedant.firebaseapp.com",
+  projectId: "blog-vedant",
+  storageBucket: "blog-vedant.appspot.com",
+  messagingSenderId: "195429389121",
+  appId: "1:195429389121:web:c3c62b098fe3e3134a07c0"
 };
 
 // Initialize Firebase
