@@ -6,21 +6,21 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    email:{
+    email: {
         type: String,
         required: true,
         unique: true,
     },
-    password:{
+    password: {
         type: String,
         required: true,
     },
-    role:{
+    role: {
         type: String,
         enum: ["chef","waiter","customer","hotel_admin","hall_manager"],
         required: true,
     },
-    phone:{
+    phone: {
         type: String,
         required: true,
         unique: true,
@@ -32,7 +32,7 @@ const userSchema = new mongoose.Schema({
             return this.role !== "customer";
         } 
     },
-    profilePicture:{
+    profilePicture: {
         type: String,
         default: "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
     }

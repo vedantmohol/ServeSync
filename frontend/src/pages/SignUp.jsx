@@ -28,7 +28,7 @@ function SignUp() {
 
       const res = await fetch('/api/auth/signup', {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
 
@@ -38,7 +38,7 @@ function SignUp() {
       }
       setLoading(false);
       if(res.ok){
-        navigate("/sign-in");
+        navigate('/sign-in');
       }
     } catch (error) {
       setErrorMessage(error.message);
@@ -51,7 +51,7 @@ function SignUp() {
       <div className="flex p-3 max-w-3xl mx-auto flex-col md:flex-row md:items-center gap-4">
         {/* LeftSide */}
         <div className="flex-1">
-          <Link to="/" className="flex items-center">
+          <Link to='/' className="flex items-center">
             <img
               src={ServeSyncLogo}
               alt="ServeSync Logo"
@@ -68,11 +68,11 @@ function SignUp() {
         <div className="flex-1">
           <form className="flex flex-col gap-3" onSubmit={handleSubmit}>
             <div>
-              <Label value="Your Username" />
+              <Label value='Your Username' />
               <TextInput
                 type="text"
                 placeholder="Username"
-                id="username"
+                id='username'
                 onChange={handleChange}
               />
             </div>
@@ -81,7 +81,7 @@ function SignUp() {
               <TextInput
                 type="text"
                 placeholder="XXXXXXXXXX"
-                id="number"
+                id='phone'
                 onChange={handleChange}
               />
             </div>
@@ -90,7 +90,7 @@ function SignUp() {
               <TextInput
                 type="email"
                 placeholder="name@example.com"
-                id="email"
+                id='email'
                 onChange={handleChange}
               />
             </div>
@@ -99,13 +99,13 @@ function SignUp() {
               <TextInput
                 type="password"
                 placeholder="********"
-                id="password"
+                id='password'
                 onChange={handleChange}
               />
             </div>
             <Button
               gradientDuoTone="purpleToPink"
-              type="submit"
+              type='submit'
               disabled={loading}
             >
               {loading ? (
