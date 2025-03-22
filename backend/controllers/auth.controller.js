@@ -50,7 +50,7 @@ export const signIn = async(req,res,next) =>{
             return next(errorHandler(400,"User not found"));
         }
 
-        const validPassword = await bcryptjs.compare(password, validUser.password);
+        const validPassword =  bcryptjs.compareSync(password, validUser.password);
         if(!validPassword){
             return next(errorHandler(400,"Invalid Password!"));
         }
@@ -66,7 +66,13 @@ export const signIn = async(req,res,next) =>{
         }
 
         const token = jwt.sign(
-            {id: validUser._id, role: validUser.role},
+            { 
+                id: validUser._id, 
+                role: validUser.role,
+                username: validUser.username,
+                email: validUser.email,
+                phone: validUser.phone
+            },
             process.env.JWT_SECRET,
             { expiresIn: "7d"}
         );
