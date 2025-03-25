@@ -1,3 +1,4 @@
+import { useDispatch } from 'react-redux';
 import { AiOutlineSearch } from "react-icons/ai";
 import { FaLeaf, FaDrumstickBite } from "react-icons/fa";
 import React, { useState } from "react";
@@ -8,7 +9,24 @@ import { useSelector } from "react-redux";
 
 function Header() {
   const [vegMode, setVegMode] = useState(true);
+  const dispatch = useDispatch();
   const { currentUser } = useSelector((state) => state.user);
+
+  const handleSignOut = async()=>{
+      try{
+        const res = await fetch('/api/customer/signout',{
+          method: 'POST',
+        });
+        const data = await res.json();
+        if(!res.ok){
+          console.log(data.message);
+        }else{
+          dispatch(signoutSuccess());
+        }
+      }catch(error){
+        console.log(error.message);
+      }
+    }
 
   return (
     <Navbar className="bg-purple-800 text-white border-b-2 flex flex-wrap justify-between items-center p-4">
@@ -139,7 +157,7 @@ function Header() {
               <Dropdown.Item>Profile</Dropdown.Item>
             </Link>
             <Dropdown.Divider />
-            <Dropdown.Item>Sign out</Dropdown.Item>
+            <Dropdown.Item onClick={handleSignOut}>Sign out</Dropdown.Item>
           </Dropdown>
         ) : (
           <Link to="/sign-in">
