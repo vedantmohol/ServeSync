@@ -6,6 +6,7 @@ import { Avatar, Button, Dropdown, Navbar, TextInput } from "flowbite-react";
 import { Link } from "react-router-dom";
 import ServeSyncLogo from "../assets/ServeSyncLogo.png";
 import { useSelector } from "react-redux";
+import { signoutSuccess } from '../redux/user/userSlice.js';
 
 function Header() {
   const [vegMode, setVegMode] = useState(true);

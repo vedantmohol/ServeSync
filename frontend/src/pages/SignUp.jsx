@@ -4,7 +4,6 @@ import { Link, useNavigate } from "react-router-dom";
 import OAuth from "../components/OAuth";
 import ServeSyncLogo from "../assets/ServeSyncLogo.png";
 
-
 function SignUp() {
   const [formData, setFormData] = useState({});
   const [errorMessage, setErrorMessage] = useState(null);
@@ -18,7 +17,7 @@ function SignUp() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.username || !formData.number || !formData.password) {
+    if (!formData.username || !formData.phone || !formData.password) {
       return setErrorMessage("Please fill out all fields.");
     }
 
@@ -27,7 +26,7 @@ function SignUp() {
       setErrorMessage(null);
 
       const res = await fetch('/api/auth/signup', {
-        method: "POST",
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });

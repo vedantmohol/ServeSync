@@ -4,36 +4,35 @@ import { errorHandler } from "../utils/error.js";
 import jwt from "jsonwebtoken";
 
 export const signUp = async(req,res,next) =>{
+    const {username, phone, email, password} = req.body;
+
+    if(!username || !password || !phone || username ==='' ||  phone ==='' || password ==='' )
+    {
+        next(errorHandler(400,'All fields are required'));
+    }
+
+    const existingUser = await User.findOne({ phone });
+    if(existingUser){
+        next(errorHandler(400, "User already exists."));
+    }
+
+    const salt = await bcryptjs.genSalt(10);
+    const hashedPassword = await bcryptjs.hash(password, salt);
+
+    const newUser = new User({ 
+        username, 
+        phone, 
+        email : email || null, 
+        password : hashedPassword, 
+        role: "customer", 
+        hotelId: null,
+    });
+    
     try{
-        const {username, phone, email, password} = req.body;
-
-        if(!username || !password || !phone || username.trim()==='' || password.trim()==='' || phone.trim()==='')
-        {
-            return res.status(400).json({ message: 'All fields are required' });
-        }
-
-        const existingUser = await User.findOne({ phone });
-        if(existingUser){
-            return next(errorHandler(400, "User already exists."));
-        }
-    
-        const salt = await bcryptjs.genSalt(10);
-        const hashedPassword = await bcryptjs.hash(password, salt);
-
-        const newUser = new User({ 
-            username, 
-            phone, 
-            email : email || null, 
-            password : hashedPassword, 
-            role: "customer", 
-            hotelId: null,
-        });
         await newUser.save();
-    
-        res.status(201).json({ message: "User registered successfully." });
-
+        res.json("User registered successfully.");
     }catch(error){
-        res.status(500).json({ message: error.message });
+        next(error);
     }
 }
 

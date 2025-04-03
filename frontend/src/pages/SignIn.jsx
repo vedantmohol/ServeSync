@@ -142,15 +142,15 @@ function SignIn() {
             <Button
               gradientDuoTone="purpleToPink"
               type="submit"
-              // disabled={loading}
+              disabled={loading}
             >
               {loading ?  (
-                "Sign In"
-              ) : (
                 <>
-                  <Spinner size="sm" />
-                  <span className="pl-3">Loading...</span>
-                </>
+                <Spinner size="sm" />
+                <span className="pl-3">Loading...</span>
+              </>
+              ) : (
+                "Sign In"
               )}
             </Button>
             <OAuth/>

@@ -9,10 +9,9 @@ import { deleteUserFailure, deleteUserStart, deleteUserSuccess, signoutSuccess, 
 import { HiOutlineExclamationCircle } from 'react-icons/hi';
 
 function DashProfile() {
-  const {currentUser, error} = useSelector((state) => state.user);
+  const {currentUser, error, loading} = useSelector((state) => state.user);
   const [imageFile, setImageFile] = useState(null);
   const [imageFileUrl,setImageFileUrl] = useState(null);
-  const filePickerRef = useRef();
   const [imageFileUploadProgress, setImageFileUploadProgress] = useState(null);
   const [imageFileUploadError, setImageFileUploadError] = useState(null);
   const [formData, setFormData] = useState({});
@@ -20,6 +19,7 @@ function DashProfile() {
   const [imageFileUploading,setImageFileUploading] = useState(false);
   const [updateUserSuccess,setUpdateUserSuccess] = useState(null);
   const [updateUserError,setUpdateUserError] = useState(null);
+  const filePickerRef = useRef();
   const [showModal,setShowModal] = useState(false);
 
   const handleImageChange = (e) =>{
@@ -28,7 +28,7 @@ function DashProfile() {
       setImageFile(file);
       setImageFileUrl(URL.createObjectURL(file));
     }
-  }
+  };
 
   useEffect(()=>{
     if(imageFile){
@@ -52,8 +52,8 @@ function DashProfile() {
       (error)=>{
         setImageFileUploadError('Could not upload image (File must be less than 2MB)');
         setImageFileUploadProgress(null);
-        setImageFileUrl(null);
         setImageFile(null);
+        setImageFileUrl(null);
         setImageFileUploading(false); 
       },
       () =>{
@@ -61,12 +61,12 @@ function DashProfile() {
           setImageFileUrl(downloadURL);
           setFormData({ ...formData, profilePicture: downloadURL }); 
           setImageFileUploading(false);
-        })
+        });
       }
-    )
-  }
+    );
+  };
 
-  const handleChange = async(e)=>{
+  const handleChange = (e)=>{
     setFormData({ ...formData, [e.target.id]: e.target.value });
   }
 
@@ -97,7 +97,7 @@ function DashProfile() {
 
       if(!res.ok){
         dispatch(updateFailure(data.message));
-        setImageFileUploadError(data.message);
+        setUpdateUserError(data.message);
       }else{
         dispatch(updateSuccess(data));
         setUpdateUserSuccess("User profile updated successfully!");
@@ -140,7 +140,8 @@ function DashProfile() {
     }catch(error){
       console.log(error.message);
     }
-  }
+  };
+
   return (
     <div className='max-w-lg mx-auto p-3 w-full'>
       <h1 className='my-7 text-center font-semibold text-3xl'>Profile</h1>
@@ -158,21 +159,21 @@ function DashProfile() {
                 left: 0,
               },
               path: {
-                stroke: `rgba(62,152,199), ${imageFileUploadProgress / 100}`,
+                stroke: `rgba(62,152,199, ${imageFileUploadProgress / 100})`,
               }
             }}/>
         )}
         <img src={imageFileUrl || currentUser.profilePicture} alt="user" 
         className={`rounded-full w-full h-full object-cover border-8 border-[lightgray] ${ imageFileUploadProgress && imageFileUploadProgress<100 && 'opacity-60'}`} />
         </div>
-        { imageFileUploadError && 
-        <Alert color='failure'>{imageFileUploadError}</Alert> }
+        { imageFileUploadError && (
+        <Alert color='failure'>{imageFileUploadError}</Alert>) }
         <TextInput type='text' id='username' placeholder='username' defaultValue={currentUser.username} onChange={handleChange}/>
-        <TextInput type='text' id='email' placeholder='email' defaultValue={currentUser.email} onChange={handleChange}/>
+        <TextInput type='email' id='email' placeholder='email' defaultValue={currentUser.email} onChange={handleChange}/>
         {/* <TextInput type='text' id='phone' placeholder='phone number' defaultValue={currentUser.phone} /> */}
         <TextInput type='password' id='password' placeholder='password' onChange={handleChange}/>
-        <Button type='submit' gradientDuoTone='purpleToBlue' outline>
-          Update
+        <Button type='submit' gradientDuoTone='purpleToBlue' outline disabled={loading || imageFileUploading}>
+          {loading ? 'Loading...' : 'Update'}
         </Button>
       </form>
       <div className='text-red-500 flex justify-between mt-5'>
@@ -213,4 +214,4 @@ function DashProfile() {
   )
 }
 
-export default DashProfile
+export default DashProfile;
