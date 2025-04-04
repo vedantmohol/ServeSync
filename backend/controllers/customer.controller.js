@@ -34,42 +34,72 @@ export const updateUser = async (req, res, next) => {
       );
     }
   }
-    try {
-      const updatedUser = await User.findByIdAndUpdate(
-        req.params.userId,
-        {
-          $set: {
-            username: req.body.username,
-            email: req.body.email,
-            profilePicture: req.body.profilePicture,
-            password: req.body.password,
-          },
+  try {
+    const updatedUser = await User.findByIdAndUpdate(
+      req.params.userId,
+      {
+        $set: {
+          username: req.body.username,
+          email: req.body.email,
+          profilePicture: req.body.profilePicture,
+          password: req.body.password,
         },
-        { new: true }
-      );
-      const { password, ...rest } = updatedUser._doc;
-      res.status(200).json(rest);
-    } catch (error) {
-      next(error);
-    }
+      },
+      { new: true }
+    );
+    const { password, ...rest } = updatedUser._doc;
+    res.status(200).json(rest);
+  } catch (error) {
+    next(error);
+  }
 };
 
-export const deleteUser = async(req,res,next) =>{
-  if(req.user.id !== req.params.userId){
-    return next(errorHandler(403,"You are not allowed to delete this user!"));
+export const deleteUser = async (req, res, next) => {
+  if (req.user.id !== req.params.userId) {
+    return next(errorHandler(403, "You are not allowed to delete this user!"));
   }
-  try{
+  try {
     await User.findByIdAndDelete(req.params.userId);
-    res.status(200).json({ message : "User has been deleted"});
-  }catch(error){
+    res.status(200).json({ message: "User has been deleted" });
+  } catch (error) {
     next(error);
   }
-}
+};
 
-export const signOut = (req,res,next) =>{
-  try{
-    res.clearCookie('access_token').status(200).json('User has been signed out');
-  }catch(error){
+export const signOut = (req, res, next) => {
+  try {
+    res
+      .clearCookie("access_token")
+      .status(200)
+      .json("User has been signed out");
+  } catch (error) {
     next(error);
   }
-}
+};
+
+export const verifyPasswordForHotel = async (req, res, next) => {
+  const { phone, password } = req.body;
+  if (!phone) {
+    return next(errorHandler(400, "Phone number not found in user session"));
+  }
+  if (!password) {
+    return next(errorHandler(400, "Password is required!"));
+  }
+  
+  try {
+
+    const user = await User.findOne({ phone });
+    if (!user) {
+      return next(errorHandler(404, "User not found!"));
+    }
+
+    const isMatch = bcryptjs.compareSync(password, user.password);
+    if (!isMatch) {
+      return next(errorHandler(400, "Incorrect password!"));
+    }
+
+    res.status(200).json({ message: "Password verified successfully!" });
+  } catch (error) {
+    next(error);
+  }
+};
