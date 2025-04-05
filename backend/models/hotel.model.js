@@ -5,12 +5,22 @@ const hotelSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    adminPhone: {
+    phone: {
         type: String,
+        required: true,
+    },
+    adminEmail:{
+        type: String,
+        unique: true,
         required: true,
     },
     hotelName: {
         type: String,
+        required: true,
+    },
+    hotelType: {
+        type: String,
+        enum: ['veg', 'non-veg', 'veg-nonveg'],
         required: true,
     },
     hotelAddress: {
@@ -45,6 +55,7 @@ const hotelSchema = new mongoose.Schema({
             const yyyy = now.getFullYear();
             const mm = String(now.getMonth() + 1).padStart(2, '0');
             const dd = String(now.getDate()).padStart(2, '0');
+            const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
             const shortId = Array.from({ length: 2 }, () =>
                 letters.charAt(Math.floor(Math.random() * letters.length))
               ).join('');
