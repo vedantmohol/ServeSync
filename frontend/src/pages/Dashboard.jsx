@@ -1,20 +1,26 @@
 import React, { useEffect, useState } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import DashSidebar from '../components/DashSidebar';
 import DashProfile from '../components/DashProfile';
 import AddHotel from '../components/AddHotel';
+import AdminDashboard from '../components/AdminDashboard';
+import { useSelector } from 'react-redux';
 
 function Dashboard() {
     const location = useLocation();
     const [tab,setTab] = useState('');
+    const { currentUser } = useSelector((state) => state.user);
+    const navigate = useNavigate();
 
     useEffect(()=>{
         const urlParams = new URLSearchParams(location.search);
         const tabFromUrl = urlParams.get('tab');
-        if(tabFromUrl){
+        if (tabFromUrl === 'admin-dashboard' && currentUser?.role !== 'hotel_admin') {
+            navigate('/dashboard?tab=profile'); 
+          } else {
             setTab(tabFromUrl);
-        }
-    },[location.search]);
+          }
+    },[location.search, currentUser, navigate]);
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
@@ -23,6 +29,7 @@ function Dashboard() {
         </div>
         { tab === "profile" && <DashProfile/>}
         { tab === "add-hotel" && <AddHotel/>}
+        { tab === "admin-dashboard" && currentUser?.role === "hotel_admin" && <AdminDashboard />}
     </div>
   )
 }

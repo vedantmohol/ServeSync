@@ -48,7 +48,7 @@ function DashSidebar() {
       const res = await fetch("/api/customer/verify-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({phone: currentUser.phone, password }),
+        body: JSON.stringify({ phone: currentUser.phone, password }),
       });
 
       const data = await res.json();
@@ -85,18 +85,31 @@ function DashSidebar() {
                 Profile
               </Sidebar.Item>
             </Link>
-            
+
             <Sidebar.Item
               active={tab === "add-hotel"}
               icon={HiBuildingOffice2}
               className="cursor-pointer"
               onClick={() => {
-                setShowModal(true); 
+                setShowModal(true);
                 setPassword("");
               }}
             >
               Add Hotel
             </Sidebar.Item>
+
+            {currentUser?.role === "hotel_admin" && (
+              <Link to="/dashboard?tab=admin-dashboard">
+                <Sidebar.Item
+                  active={tab === "admin-dashboard"}
+                  label="Admin"
+                  labelColor="dark"
+                  as="div"
+                >
+                  Admin Dashboard
+                </Sidebar.Item>
+              </Link>
+            )}
 
             <Sidebar.Item
               icon={HiArrowSmRight}

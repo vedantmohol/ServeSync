@@ -38,8 +38,16 @@ export const registerHotel = async (req, res, next) => {
 
     await newHotel.save();
 
-    await User.findOneAndUpdate({ phone }, { role: "admin", hotelId: newHotel.hotelId });
-    res.status(201).json({ message: "Hotel registered successfully." });
+    const existingUser = await User.findOne({ phone });
+    if (!existingUser) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    existingUser.role = "hotel_admin";
+    await existingUser.save();
+
+    const { password, ...rest } = existingUser._doc;
+    res.status(201).json(rest);
 
   } catch (error) {
     next(error);

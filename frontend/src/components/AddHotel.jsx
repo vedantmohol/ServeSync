@@ -1,20 +1,16 @@
-import {
-  Alert,
-  Button,
-  Label,
-  Select,
-  Spinner,
-  TextInput,
-} from "flowbite-react";
+import { Alert, Button, Label, Select, Spinner,TextInput } from "flowbite-react";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import ServeSyncLogo from "../assets/ServeSyncLogo.png";
+import { useDispatch } from "react-redux";
+import { updateFailure, updateStart, updateSuccess } from "../redux/user/userSlice.js";
 
 function AddHotel() {
   const [formData, setFormData] = useState({});
   const [errorMessage, setErrorMessage] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -48,6 +44,7 @@ function AddHotel() {
     try {
       setLoading(true);
       setErrorMessage(null);
+      dispatch(updateStart());
 
       const res = await fetch("/api/hotel/register", {
         method: "POST",
@@ -65,12 +62,16 @@ function AddHotel() {
 
       const data = await res.json();
       if (!res.ok) {
+        dispatch(updateFailure(data.message));
+        setLoading(false);
         return setErrorMessage(data.message);
       }
 
+      dispatch(updateSuccess(data));
       setLoading(false);
       navigate("/admin-dashboard");
     } catch (error) {
+      dispatch(updateFailure(error.message));
       setErrorMessage(error.message);
       setLoading(false);
     }
