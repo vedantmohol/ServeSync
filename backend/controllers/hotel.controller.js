@@ -38,7 +38,7 @@ export const registerHotel = async (req, res, next) => {
 
     await newHotel.save();
 
-    await User.findOneAndUpdate({ phone }, { role: "admin" });
+    await User.findOneAndUpdate({ phone }, { role: "admin", hotelId: newHotel.hotelId });
     res.status(201).json({ message: "Hotel registered successfully." });
 
   } catch (error) {
