@@ -16,7 +16,7 @@ const foodItemSchema = new mongoose.Schema({
   description: {
     type: String,
   },
-  class: {
+  dishType: {
     type: String,
     enum: ["Veg", "Nonveg"],
     required: true,

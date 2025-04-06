@@ -44,6 +44,7 @@ export const registerHotel = async (req, res, next) => {
     }
 
     existingUser.role = "hotel_admin";
+    existingUser.hotelId = newHotel.hotelId;
     await existingUser.save();
 
     const { password, ...rest } = existingUser._doc;

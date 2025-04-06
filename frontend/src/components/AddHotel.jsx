@@ -69,7 +69,7 @@ function AddHotel() {
 
       dispatch(updateSuccess(data));
       setLoading(false);
-      navigate("/admin-dashboard");
+      navigate("/");
     } catch (error) {
       dispatch(updateFailure(error.message));
       setErrorMessage(error.message);
