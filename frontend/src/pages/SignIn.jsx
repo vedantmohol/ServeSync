@@ -1,20 +1,34 @@
-import { Button, Label, TextInput, Spinner, Select, Alert } from "flowbite-react";
+import {
+  Button,
+  Label,
+  TextInput,
+  Spinner,
+  Select,
+  Alert,
+} from "flowbite-react";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { signInFailure, signInStart, signInSuccess } from "../redux/user/userSlice";
+import {
+  signInFailure,
+  signInStart,
+  signInSuccess,
+} from "../redux/user/userSlice";
 import OAuth from "../components/OAuth";
 import ServeSyncLogo from "../assets/ServeSyncLogo.png";
 
 function SignIn() {
   const [formData, setFormData] = useState({
     phone: "",
+    email: "",
     password: "",
     staffId: "",
+    hotelId: "",
+    adminEmail: "",
     role: "",
   });
 
-  const {loading, error: errorMessage} = useSelector((state) => state.user);
+  const { loading, error: errorMessage } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -25,7 +39,7 @@ function SignIn() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.phone || !formData.password) {
-      return dispatch(signInFailure('Please fill all the fields'));
+      return dispatch(signInFailure("Please fill all the fields"));
     }
 
     try {
@@ -40,34 +54,32 @@ function SignIn() {
 
       const data = await res.json();
       if (data.success === false) {
-         dispatch(signInFailure(data.message));
+        dispatch(signInFailure(data.message));
       }
 
-
-      if(res.ok){
+      if (res.ok) {
         dispatch(signInSuccess(data));
-          switch (data.role) {
-            case "customer":
-              navigate("/");
-              break;
-            case "chef":
-              navigate("/chef-dashboard");
-              break;
-            case "waiter":
-              navigate("/waiter-dashboard");
-              break;
-            case "hall_manager":
-              navigate("/hall-manager-dashboard");
-              break;
-            case "hotel_admin":
-              navigate("/admin-dashboard");
-              break;
-            default:
-              navigate("/");
-              break;
-          }
+        switch (data.role) {
+          case "customer":
+            navigate("/");
+            break;
+          case "chef":
+            navigate("/chef-dashboard");
+            break;
+          case "waiter":
+            navigate("/waiter-dashboard");
+            break;
+          case "hall_manager":
+            navigate("/hall-manager-dashboard");
+            break;
+          case "hotel_admin":
+            navigate("/admin-dashboard");
+            break;
+          default:
+            navigate("/");
+            break;
+        }
       }
-        
     } catch (error) {
       dispatch(signInFailure(error.message));
     }
@@ -112,30 +124,76 @@ function SignIn() {
               />
             </div>
             <div>
-                  <Label value="Role" />
-                  <Select id="role" onChange={handleChange} required>
-                    <option value="">Select Role</option>
-                    <option value="customer">Customer</option>
-                    <option value="chef">Chef</option>
-                    <option value="waiter">Waiter</option>
-                    <option value="hall_manager">Hall Manager</option>
-                    <option value="hotel_admin">Hotel Admin</option>
-                  </Select>
-              </div>
+              <Label value="Role" />
+              <Select id="role" onChange={handleChange} required>
+                <option value="">Select Your Role</option>
+                <option value="customer">Customer</option>
+                <option value="chef">Chef</option>
+                <option value="waiter">Waiter</option>
+                <option value="hall_manager">Hall Manager</option>
+                <option value="hotel_admin">Hotel Admin</option>
+              </Select>
+            </div>
 
-            {formData.role !== "customer" && formData.role && (
+            { formData.role !== "hotel_admin" &&
+              formData.role && (
+                <>
+                  <div>
+                    <Label value="Email" />
+                    <TextInput
+                      type="email"
+                      placeholder="Enter Your Email"
+                      id="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
+                </>
+              )}
+
+            {formData.role !== "customer" &&
+              formData.role !== "hotel_admin" &&
+              formData.role && (
+                <>
+                  <div>
+                    <Label value="Staff ID" />
+                    <TextInput
+                      type="text"
+                      placeholder="Enter Staff ID"
+                      id="staffId"
+                      value={formData.staffId}
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
+                </>
+              )}
+
+            {formData.role === "hotel_admin" && formData.role && (
               <>
-                <div>
-                  <Label value="Staff ID" />
-                  <TextInput
-                    type="text"
-                    placeholder="Enter Staff ID"
-                    id="staffId"
-                    value={formData.staffId}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
+              <div>
+              <Label value="Admin Email" />
+              <TextInput
+                type="email"
+                placeholder="abc@xyz.com"
+                id="adminEmail"
+                value={formData.adminEmail}
+                onChange={handleChange}
+                required
+              />
+              </div>
+              <div>
+              <Label value="Hotel ID" />
+              <TextInput
+                type="text"
+                placeholder="Eg: 12345678AB"
+                id="hotelId"
+                value={formData.hotelId}
+                onChange={handleChange}
+                required
+              />
+              </div>
               </>
             )}
 
@@ -144,16 +202,16 @@ function SignIn() {
               type="submit"
               disabled={loading}
             >
-              {loading ?  (
+              {loading ? (
                 <>
-                <Spinner size="sm" />
-                <span className="pl-3">Loading...</span>
-              </>
+                  <Spinner size="sm" />
+                  <span className="pl-3">Loading...</span>
+                </>
               ) : (
                 "Sign In"
               )}
             </Button>
-            <OAuth/>
+            <OAuth />
           </form>
 
           <div className="flex gap-2 mt-5 text-sm">

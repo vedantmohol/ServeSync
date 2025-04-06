@@ -1,4 +1,5 @@
 import User from "../models/user.model.js";
+import Hotel from "../models/hotel.model.js";
 import bcryptjs from "bcryptjs";
 import { errorHandler } from "../utils/error.js";
 import jwt from "jsonwebtoken";
@@ -6,12 +7,12 @@ import jwt from "jsonwebtoken";
 export const signUp = async(req,res,next) =>{
     const {username, phone, email, password} = req.body;
 
-    if(!username || !password || !phone || username ==='' ||  phone ==='' || password ==='' )
+    if(!username || !password || !phone || !email || username ==='' ||  phone ==='' || email ==='' || password ==='' )
     {
         next(errorHandler(400,'All fields are required'));
     }
 
-    const existingUser = await User.findOne({ phone });
+    const existingUser = await User.findOne({ email });
     if(existingUser){
         next(errorHandler(400, "User already exists."));
     }
@@ -22,7 +23,7 @@ export const signUp = async(req,res,next) =>{
     const newUser = new User({ 
         username, 
         phone, 
-        email : email || null, 
+        email,
         password : hashedPassword, 
         role: "customer", 
         hotelId: null,
@@ -37,7 +38,7 @@ export const signUp = async(req,res,next) =>{
 }
 
 export const signIn = async(req,res,next) =>{
-    const {phone, password, staffId, role} = req.body;
+    const {phone,email, password, staffId, adminEmail, hotelId, role} = req.body;
 
     if(!phone || !password || phone.trim() ==="" || password.trim() ===""){
         return next(errorHandler(400,"All fields are required"));
@@ -49,18 +50,42 @@ export const signIn = async(req,res,next) =>{
             return next(errorHandler(400,"User not found"));
         }
 
+        if (validUser.role !== role) {
+            return next(errorHandler(400, "Incorrect role selected"));
+        }
+
         const validPassword =  bcryptjs.compareSync(password, validUser.password);
         if(!validPassword){
             return next(errorHandler(400,"Invalid Password!"));
         }
 
-        if(validUser.role !== "customer"){
+        if (role === "hotel_admin") {
+            if (!hotelId || hotelId.trim() === "") {
+              return next(errorHandler(400, "Hotel ID is required for hotel admins"));
+            }
+            if (!adminEmail || adminEmail.trim() === "") {
+                return next(errorHandler(400, "Admin Email is required for hotel admins"));
+            }
+
+            const hotel = await Hotel.findOne({ adminEmail });
+            if (hotel.hotelId !== hotelId) {
+              return next(errorHandler(400, "Invalid Hotel ID"));
+            }
+            if (hotel.adminEmail !== adminEmail) {
+                return next(errorHandler(400, "Admin Email does not match"));
+            }
+            if (hotel.phone !== validUser.phone) {
+                return next(errorHandler(400, "Phone mismatch between user and hotel admin"));
+            }
+        }
+
+        if(validUser.role !== "customer" && validUser.role !== "hotel_admin"){
             if(!staffId || !role || staffId.trim() ==="" || role.trim() ===""){
                 return next(errorHandler(400,"Staff ID and role are required for staff members."));
             }
 
-            if(validUser.hotelId !== staffId || validUser.role !== role){
-                return next(errorHandler(400,"Invalid staffId or role"));
+            if(validUser.staffId !== staffId){
+                return next(errorHandler(400,"Invalid staffId"));
             }
         }
 
@@ -80,7 +105,6 @@ export const signIn = async(req,res,next) =>{
         res.status(200).cookie('access_token',token,{
             httpOnly: true,
         }).json(rest);
-
     }catch(error){
         next(error);
     }

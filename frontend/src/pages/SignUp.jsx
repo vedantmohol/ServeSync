@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import OAuth from "../components/OAuth";
 import ServeSyncLogo from "../assets/ServeSyncLogo.png";
+import { set } from "mongoose";
 
 function SignUp() {
   const [formData, setFormData] = useState({});
@@ -17,7 +18,7 @@ function SignUp() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.username || !formData.phone || !formData.password) {
+    if (!formData.username || !formData.phone || !formData.email || !formData.password) {
       return setErrorMessage("Please fill out all fields.");
     }
 
@@ -33,6 +34,7 @@ function SignUp() {
 
       const data = await res.json();
       if (data.success === false) {
+        setLoading(false);
         return setErrorMessage(data.message);
       }
       setLoading(false);
@@ -91,6 +93,7 @@ function SignUp() {
                 placeholder="name@example.com"
                 id='email'
                 onChange={handleChange}
+                required
               />
             </div>
             <div>

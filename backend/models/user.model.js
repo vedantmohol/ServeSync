@@ -7,8 +7,8 @@ const userSchema = new mongoose.Schema({
     },
     email: {
         type: String,
-        default: null,
         unique: true,
+        required: true,
     },
     password: {
         type: String,
@@ -22,7 +22,6 @@ const userSchema = new mongoose.Schema({
     phone: {
         type: String,
         required: true,
-        unique: true,
     },
     hotelId: { 
         type: String, 
@@ -30,6 +29,13 @@ const userSchema = new mongoose.Schema({
         required: function(){ 
             return this.role !== "customer";
         } 
+    },
+    staffId: {
+        type: String,
+        required: function() {
+            return this.role !== "customer" && this.role !== "hotel_admin";
+        },
+        default: null
     },
     profilePicture: {
         type: String,
