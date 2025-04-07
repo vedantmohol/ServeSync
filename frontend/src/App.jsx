@@ -6,17 +6,22 @@ import Home from "./pages/Home";
 import Header from "./components/Header";
 import Dashboard from "./pages/Dashboard";
 import PrivateRoute from "./components/PrivateRoute";
+import AdminPrivateRoute from "./components/AdminPrivateRoute";
+import AdminHomePage from "./pages/AdminHomePage";
 
 function App() {
   return (
     <BrowserRouter>
-    <Header/>
+      <Header />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/sign-in" element={<SignIn />} />
         <Route path="/sign-up" element={<SignUp />} />
-        <Route element={<PrivateRoute/>}>
-        <Route path="/dashboard" element={<Dashboard/>}/>
+        <Route element={<PrivateRoute />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+        </Route>
+        <Route element={<AdminPrivateRoute />}>
+          <Route path="/admin-home" element={<AdminHomePage/>} />
         </Route>
       </Routes>
     </BrowserRouter>

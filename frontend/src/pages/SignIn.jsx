@@ -73,7 +73,7 @@ function SignIn() {
             navigate("/hall-manager-dashboard");
             break;
           case "hotel_admin":
-            navigate("/admin-dashboard");
+            navigate("/admin-home");
             break;
           default:
             navigate("/");

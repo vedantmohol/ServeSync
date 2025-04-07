@@ -1,33 +1,34 @@
-import { useDispatch } from 'react-redux';
+import { useDispatch } from "react-redux";
 import { AiOutlineSearch } from "react-icons/ai";
 import { FaLeaf, FaDrumstickBite } from "react-icons/fa";
 import React, { useState } from "react";
 import { Avatar, Button, Dropdown, Navbar, TextInput } from "flowbite-react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import ServeSyncLogo from "../assets/ServeSyncLogo.png";
 import { useSelector } from "react-redux";
-import { signoutSuccess } from '../redux/user/userSlice.js';
+import { signoutSuccess } from "../redux/user/userSlice.js";
 
 function Header() {
   const [vegMode, setVegMode] = useState(true);
   const dispatch = useDispatch();
   const { currentUser } = useSelector((state) => state.user);
+  const path = useLocation().pathname;
 
-  const handleSignOut = async()=>{
-      try{
-        const res = await fetch('/api/customer/signout',{
-          method: 'POST',
-        });
-        const data = await res.json();
-        if(!res.ok){
-          console.log(data.message);
-        }else{
-          dispatch(signoutSuccess());
-        }
-      }catch(error){
-        console.log(error.message);
+  const handleSignOut = async () => {
+    try {
+      const res = await fetch("/api/customer/signout", {
+        method: "POST",
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        console.log(data.message);
+      } else {
+        dispatch(signoutSuccess());
       }
+    } catch (error) {
+      console.log(error.message);
     }
+  };
 
   return (
     <Navbar className="bg-purple-800 text-white border-b-2 flex flex-wrap justify-between items-center p-4">
@@ -51,93 +52,19 @@ function Header() {
         <AiOutlineSearch className="text-xl" />
       </Button>
 
-      <div className="flex items-center gap-4">
-        {currentUser && (
-          <>
-            {currentUser.role === "customer" && (
-              <>
-                <Button
-                  gradientDuoTone="purpleToBlue"
-                  className="px-4 py-2"
-                  onClick={() => setVegMode(!vegMode)}
-                >
-                  {vegMode ? (
-                    <FaLeaf className="text-green-500" />
-                  ) : (
-                    <FaDrumstickBite className="text-red-500" />
-                  )}
-                </Button>
-                <Link to={"/book-table"}>
-                  <Button gradientDuoTone="purpleToBlue" className="px-4 py-2">
-                    Book Table
-                  </Button>
-                </Link>
-                <Link to="/bill">
-                  <Button gradientDuoTone="purpleToBlue" className="px-4 py-2">
-                    Pay Bill
-                  </Button>
-                </Link>
-              </>
+      <div className="flex items-center gap-2 md:order-2">
+        {currentUser && currentUser.role === "customer" && (
+          <Button
+            gradientDuoTone="purpleToBlue"
+            className="px-3 py-2"
+            onClick={() => setVegMode(!vegMode)}
+          >
+            {vegMode ? (
+              <FaLeaf className="text-green-500" />
+            ) : (
+              <FaDrumstickBite className="text-red-500" />
             )}
-
-            {currentUser.role === "hall_manager" && (
-              <>
-                <Link to={"/take-order"}>
-                  <Button gradientDuoTone="purpleToBlue" className="px-4 py-2">
-                    Take Orders
-                  </Button>
-                </Link>
-                <Link to={"/generate-bill"}>
-                  <Button gradientDuoTone="purpleToBlue" className="px-4 py-2">
-                    Generate Bills
-                  </Button>
-                </Link>
-                <Link to={"/manage-table"}>
-                  <Button gradientDuoTone="purpleToBlue" className="px-4 py-2">
-                    Manage Tables
-                  </Button>
-                </Link>
-              </>
-            )}
-
-            {currentUser.role === "hotel_admin" && (
-              <>
-                <Link to={"/admin-bills"}>
-                  <Button gradientDuoTone="purpleToBlue" className="px-4 py-2">
-                    View Bill
-                  </Button>
-                </Link>
-                <Link to={"/staff"}>
-                  <Button gradientDuoTone="purpleToBlue" className="px-4 py-2">
-                    View Staff
-                  </Button>
-                </Link>
-              </>
-            )}
-
-            {currentUser.role === "chef" && (
-              <>
-                <Link to={"/orders-chef"}>
-                  <Button gradientDuoTone="purpleToBlue" className="px-4 py-2">
-                    View Orders
-                  </Button>
-                </Link>
-                <Link to={"/food-stock"}>
-                  <Button gradientDuoTone="purpleToBlue" className="px-4 py-2">
-                    Food Stock
-                  </Button>
-                </Link>
-              </>
-            )}
-
-            {currentUser.role === "waiter" && (
-              <Link to="/mark-availability">
-                <Button gradientDuoTone="purpleToBlue" className="px-4 py-2">
-                  Mark Availability
-                </Button>
-              </Link>
-            )}
-          </>
+          </Button>
         )}
 
         {currentUser ? (
@@ -154,7 +81,7 @@ function Header() {
                 {currentUser.email}
               </span>
             </Dropdown.Header>
-            <Link to={"/dashboard?tab=profile"}>
+            <Link to="/dashboard?tab=profile">
               <Dropdown.Item>Profile</Dropdown.Item>
             </Link>
             <Dropdown.Divider />
@@ -167,7 +94,104 @@ function Header() {
             </Button>
           </Link>
         )}
+
+        <Navbar.Toggle />
       </div>
+
+      <Navbar.Collapse>
+        {currentUser && currentUser.role === "customer" && (
+          <>
+            <Navbar.Link as="div" active={path === "/reservetable"}>
+              <Link to="/reservetable">
+                <span className="px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg hover:opacity-90 text-white">
+                  Book Table
+                </span>
+              </Link>
+            </Navbar.Link>
+            <Navbar.Link as="div" active={path === "/restaurants"}>
+              <Link to="/restaurants">
+                <span className="px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg hover:opacity-90 text-white">
+                  Restaurants
+                </span>
+              </Link>
+            </Navbar.Link>
+            <Navbar.Link as="div" active={path === "/paybill"}>
+              <Link to="/paybill">
+                <span className="px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg hover:opacity-90 text-white">
+                  Pay Bill
+                </span>
+              </Link>
+            </Navbar.Link>
+          </>
+        )}
+
+        {currentUser && currentUser.role === "hall_manager" && (
+          <>
+            <Navbar.Link as="div" active={path === "/vieworders"}>
+              <Link to="/vieworders">
+                <span className="px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg hover:opacity-90 text-white">
+                  View Orders
+                </span>
+              </Link>
+            </Navbar.Link>
+            <Navbar.Link as="div" active={path === "/managetables"}>
+              <Link to="/managetables">
+                <span className="px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg hover:opacity-90 text-white">
+                  Manage Tables
+                </span>
+              </Link>
+            </Navbar.Link>
+          </>
+        )}
+
+        {currentUser && currentUser.role === "hotel_admin" && (
+          <>
+            <Navbar.Link as="div" active={path === "/viewbills"}>
+              <Link to="/viewbills">
+                <span className="px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg hover:opacity-90 text-white">
+                  View Bills
+                </span>
+              </Link>
+            </Navbar.Link>
+            <Navbar.Link as="div" active={path === "/updatefood"}>
+              <Link to="/updatefood">
+                <span className="px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg hover:opacity-90 text-white">
+                  View Dishes
+                </span>
+              </Link>
+            </Navbar.Link>
+          </>
+        )}
+
+        {currentUser && currentUser.role === "chef" && (
+          <>
+            <Navbar.Link as="div" active={path === "/foodstsock"}>
+              <Link to="/foodstock">
+                <span className="px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg hover:opacity-90 text-white">
+                  Food Stock
+                </span>
+              </Link>
+            </Navbar.Link>
+            <Navbar.Link as="div" active={path === "/waiters"}>
+              <Link to="/waiters">
+                <span className="px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg hover:opacity-90 text-white">
+                  Call Waiters
+                </span>{" "}
+              </Link>
+            </Navbar.Link>
+          </>
+        )}
+
+        {currentUser && currentUser.role === "waiter" && (
+          <Navbar.Link as="div" active={path === "/updatestatus"}>
+            <Link to="/updatestatus">
+              <span className="px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg hover:opacity-90 text-white">
+                Update Status
+              </span>
+            </Link>
+          </Navbar.Link>
+        )}
+      </Navbar.Collapse>
     </Navbar>
   );
 }
