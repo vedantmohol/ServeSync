@@ -2,6 +2,7 @@ import { Modal, Sidebar } from "flowbite-react";
 import React, { useEffect, useState } from "react";
 import { HiUser, HiArrowSmRight } from "react-icons/hi";
 import { HiBuildingOffice2 } from "react-icons/hi2";
+import { MdFastfood } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { signoutSuccess } from "../redux/user/userSlice.js";
@@ -86,6 +87,33 @@ function DashSidebar() {
               </Sidebar.Item>
             </Link>
 
+            {currentUser?.role === "hotel_admin" && (
+              <>
+                <Link to="/dashboard?tab=admin-dashboard">
+                  <Sidebar.Item
+                    active={tab === "admin-dashboard"}
+                    label="Admin"
+                    labelColor="dark"
+                    as="div"
+                  >
+                    Admin Dashboard
+                  </Sidebar.Item>
+                </Link>
+
+                <Link to="/dashboard?tab=add-food">
+                  <Sidebar.Item
+                    active={tab === "add-food"}
+                    icon={MdFastfood}
+                    label="Food"
+                    labelColor="dark"
+                    as="div"
+                  >
+                    Add Food
+                  </Sidebar.Item>
+                </Link>
+              </>
+            )}
+
             <Sidebar.Item
               active={tab === "add-hotel"}
               icon={HiBuildingOffice2}
@@ -97,19 +125,6 @@ function DashSidebar() {
             >
               Add Hotel
             </Sidebar.Item>
-
-            {currentUser?.role === "hotel_admin" && (
-              <Link to="/dashboard?tab=admin-dashboard">
-                <Sidebar.Item
-                  active={tab === "admin-dashboard"}
-                  label="Admin"
-                  labelColor="dark"
-                  as="div"
-                >
-                  Admin Dashboard
-                </Sidebar.Item>
-              </Link>
-            )}
 
             <Sidebar.Item
               icon={HiArrowSmRight}
