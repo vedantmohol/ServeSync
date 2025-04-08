@@ -29,7 +29,7 @@ const foodItemSchema = new mongoose.Schema({
     type: String,
     default: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTne9zFARFBv8s504Akf4-Bdj2Dx6XIBWFHYQ&s"
   },
-});
+},{timestamps: true});
 
 const foodSchema = new mongoose.Schema({
   hotelName: {
