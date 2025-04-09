@@ -99,3 +99,104 @@ export const getHotels = async (req, res, next) =>{
     next(errorHandler(500, 'Failed to fetch hotels'));
   }
 }
+
+export const addStaff = async(req,res,next) =>{
+  try{
+    const {username, email, phone, role, hotelId } = req.body;
+    const validRoles = ['chef', 'waiter', 'hall_manager'];
+
+    if(!username || !email || !phone || !role) {
+      return next(errorHandler(500,"All fields required!"))
+    }
+
+    if (!validRoles.includes(role)) {
+      return next(errorHandler(400, 'Invalid role selected'));
+    }
+    
+    const user = await User.findOne({email});
+
+    if (!user) {
+      return next(errorHandler(404, 'User does not exist with given email and phone'));
+    }
+
+    if (user.role !== 'customer') {
+      return next(errorHandler(403, 'User is already a staff member'));
+    }
+
+    const hotel = await Hotel.findOne({ hotelId });
+    
+    if (!hotel) {
+      return next(errorHandler(404, 'Hotel not found'));
+    }
+
+    let base = 100;
+    let letter = '';
+    let existingList = [];
+
+    if (role === 'chef') {
+      base = 100;
+      letter = 'C';
+      existingList = hotel.chefs || [];
+    } else if (role === 'hall_manager') {
+      base = 300;
+      letter = 'H';
+      existingList = hotel.hallManagers || [];
+    } else if (role === 'waiter') {
+      base = 500;
+      letter = 'W';
+      existingList = hotel.waiters || [];
+    }
+
+    let usedNumbers = existingList.map((s) => {
+      const match = s.staffID.match(/-(\d+)[A-Z]$/);
+      return match ? parseInt(match[1], 10) : null;
+    }).filter(Boolean);
+
+    let nextNumber = base + 1;
+    while (usedNumbers.includes(nextNumber)) {
+      nextNumber++;
+    }
+
+    if (role === 'chef' && nextNumber > 299) {
+      return next(errorHandler(400, 'Chef limit reached (max 199)'));
+    }
+    if (role === 'hall_manager' && nextNumber > 499) {
+      return next(errorHandler(400, 'Hall Manager limit reached (max 199)'));
+    }
+    if (role === 'waiter' && nextNumber > 999) {
+      return next(errorHandler(400, 'Waiter limit reached (max 499)'));
+    }
+
+    const staffID = `${hotel.hotelId}-${nextNumber}${letter}`;
+
+    user.role = role;
+    user.hotelId = hotel.hotelId;
+    user.staffId = staffID;
+    await user.save();
+
+    const staffInfo = {
+      name: user.username,
+      email: user.email,
+      phone: user.phone,
+      staffID: staffID,
+      createdAt: new Date(),
+    };
+
+    if (role === 'chef') {
+      hotel.chefs.push(staffInfo);
+      hotel.numberOfChefs += 1;
+    } else if (role === 'hall_manager') {
+      hotel.hallManagers.push(staffInfo);
+      hotel.numberOfHallManagers += 1;
+    } else if (role === 'waiter') {
+      hotel.waiters.push(staffInfo);
+      hotel.numberOfWaiters += 1;
+    }
+
+    await hotel.save();
+
+    res.status(200).json({ message: 'Staff added successfully', staffID });
+  } catch (err) {
+    next(errorHandler(500, err.message || 'Failed to add staff'));
+  }
+};

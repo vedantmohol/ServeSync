@@ -39,6 +39,42 @@ const hotelSchema = new mongoose.Schema({
         type: Number,
         default: 0,
     },
+    chefs: [
+        {
+          name: String,
+          email: String,
+          phone: String,
+          staffID: String,
+          createdAt: {
+            type: Date,
+            default: Date.now,
+          },
+        }
+      ],
+      hallManagers: [
+        {
+          name: String,
+          email: String,
+          phone: String,
+          staffID: String,
+          createdAt: {
+            type: Date,
+            default: Date.now,
+          },
+        }
+      ],
+      waiters: [
+        {
+          name: String,
+          email: String,
+          phone: String,
+          staffID: String,
+          createdAt: {
+            type: Date,
+            default: Date.now,
+          },
+        }
+      ],
     numberOfWaiters: {
         type: Number,
         default: 0,
