@@ -8,6 +8,8 @@ import Dashboard from "./pages/Dashboard";
 import PrivateRoute from "./components/PrivateRoute";
 import AdminPrivateRoute from "./components/AdminPrivateRoute";
 import AdminHomePage from "./pages/AdminHomePage";
+import CustomerPrivateRoute from "./components/CustomerPrivateRoute";
+import Cart from "./pages/Cart";
 
 function App() {
   return (
@@ -22,6 +24,9 @@ function App() {
         </Route>
         <Route element={<AdminPrivateRoute />}>
           <Route path="/admin-home" element={<AdminHomePage/>} />
+        </Route>
+        <Route element={<CustomerPrivateRoute />}>
+          <Route path="/cart" element={<Cart/>} />
         </Route>
       </Routes>
     </BrowserRouter>

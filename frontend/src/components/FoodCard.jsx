@@ -1,22 +1,25 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Modal, Button } from 'flowbite-react';
+import { setCurrentOrder } from '../redux/order/orderSlice';
 
 export default function FoodCard({ item }){
-    const { food, hotelName, hotelAddress } = item;
+    const { food, hotelName } = item;
     const [showModal, setShowModal] = useState(false);
     const navigate = useNavigate();
     const { currentUser } = useSelector((state) => state.user);
+    const dispatch = useDispatch();
 
     const handleAddToCart = () => {
         if (!currentUser) {
           setShowModal(true);
         } else {
-          console.log('Added to cart:', item.food.name);
+          dispatch(setCurrentOrder(item))
+          navigate('/cart');
+          setShowModal(false);
         }
       };
-
 
     return (
         <>

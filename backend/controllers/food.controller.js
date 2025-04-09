@@ -72,6 +72,10 @@ export const getFoods = async (req, res, next) => {
       filter['food.name'] = { $regex: req.query.foodName, $options: 'i' };
     }
 
+    if (req.query.hotelId) {
+      filter.hotelId = req.query.hotelId; 
+    }
+
     if (req.query.dishType) {
       filter['food.dishType'] = req.query.dishType;
     }
