@@ -6,6 +6,7 @@ import AddHotel from '../components/AddHotel';
 import AdminDashboard from '../components/AdminDashboard';
 import { useSelector } from 'react-redux';
 import AddFood from '../components/AddFood';
+import AddStaff from '../components/AddStaff';
 
 function Dashboard() {
     const location = useLocation();
@@ -32,6 +33,7 @@ function Dashboard() {
         { tab === "add-hotel" && <AddHotel/>}
         { tab === "admin-dashboard" && currentUser?.role === "hotel_admin" && <AdminDashboard />}
         { tab === "add-food" && currentUser?.role === "hotel_admin" && <AddFood/>}
+        { tab === "add-staff" && currentUser?.role === "hotel_admin" && <AddStaff/>}
     </div>
   )
 }

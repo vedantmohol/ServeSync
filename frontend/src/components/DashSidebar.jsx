@@ -1,6 +1,6 @@
 import { Modal, Sidebar } from "flowbite-react";
 import React, { useEffect, useState } from "react";
-import { HiUser, HiArrowSmRight } from "react-icons/hi";
+import { HiUser, HiArrowSmRight, HiUserAdd } from "react-icons/hi";
 import { HiBuildingOffice2 } from "react-icons/hi2";
 import { MdFastfood } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
@@ -17,6 +17,7 @@ function DashSidebar() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const { currentUser } = useSelector((state) => state.user);
+  const [actionType, setActionType] = useState(null);
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
@@ -61,8 +62,15 @@ function DashSidebar() {
         toast.success("Password verified successfully!");
         setShowModal(false);
         setPassword("");
-        setTab("add-hotel");
-        navigate("/dashboard?tab=add-hotel");
+        if (actionType === "add-hotel") {
+          setTab("add-hotel");
+          navigate("/dashboard?tab=add-hotel");
+        } else if (actionType === "add-staff") {
+          setTab("add-staff");
+          navigate("/dashboard?tab=add-staff");
+        } else {
+          navigate("/dashboard");
+        }
       }
     } catch (error) {
       setLoading(false);
@@ -100,6 +108,20 @@ function DashSidebar() {
                   </Sidebar.Item>
                 </Link>
 
+                <Sidebar.Item
+                  active={tab === "add-staff"}
+                  icon={HiUserAdd}
+                  className="cursor-pointer"
+                  onClick={() => {
+                    setShowModal(true);
+                    setPassword("");
+                    setActionType("add-staff");
+                    setTab("add-staff");
+                  }}
+                >
+                  Add Staff
+                </Sidebar.Item>
+
                 <Link to="/dashboard?tab=add-food">
                   <Sidebar.Item
                     active={tab === "add-food"}
@@ -119,6 +141,7 @@ function DashSidebar() {
               icon={HiBuildingOffice2}
               className="cursor-pointer"
               onClick={() => {
+                setActionType("add-hotel");
                 setShowModal(true);
                 setPassword("");
               }}
