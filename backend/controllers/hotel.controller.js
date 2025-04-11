@@ -200,3 +200,65 @@ export const addStaff = async(req,res,next) =>{
     next(errorHandler(500, err.message || 'Failed to add staff'));
   }
 };
+
+export const addHotelStructure = async(req, res, next)=>{
+  try{
+    const { hotelId, numberOfFloors, floorData } = req.body;
+
+    if(!hotelId || !numberOfFloors || !floorData){
+      return next(errorHandler(400, "All fields are required."));
+    }
+    
+    const hotel = await Hotel.findOne({ hotelId });
+
+    if (!hotel) {
+      return next(errorHandler(404, 'Hotel not found'));
+    }
+
+    const floorsArray = [];
+    for (let i = 0; i < numberOfFloors; i++) {
+      const {
+        numberOfTables,
+        numberOfPremiumTables,
+        capacity,
+        normalCharges,
+        premiumCharges,
+      } = floorData[i];
+    
+      const floorNum = i + 1;
+      const floorCode = (floorNum * 100).toString().padStart(3, "0");
+      const floorId = `${hotelId}-${floorCode}`;
+
+      const tables = [];
+
+    for (let j = 0; j < numberOfTables; j++) {
+      const tableNumber = (floorNum * 100) + j + 1; 
+      const tableId = `${hotelId}-${tableNumber.toString().padStart(3, '0')}`;
+      const isPremium = j < numberOfPremiumTables ? 'Yes' : 'No';
+      const charge = isPremium === 'Yes' ? premiumCharges : normalCharges;
+
+      tables.push({
+        tableId,
+        isPremium,
+        isBooked: 'No',
+        capacity,
+        charges: charge
+      });
+    }
+
+    floorsArray.push({
+      floorId,
+      floorNumber: floorNum,
+      tables
+    });
+    }
+    hotel.numberOfFloors = numberOfFloors;
+    hotel.floors = floorsArray;
+
+    await hotel.save();
+    return res.status(200).json({ message: "Structure added successfully!", hotel });
+    
+  }catch(error){
+    next(errorHandler(500, error.message || 'Something went wrong'));
+  }
+}
