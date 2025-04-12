@@ -2,7 +2,8 @@ import { Modal, Sidebar } from "flowbite-react";
 import React, { useEffect, useState } from "react";
 import { HiUser, HiArrowSmRight, HiUserAdd } from "react-icons/hi";
 import { HiBuildingOffice2 } from "react-icons/hi2";
-import { MdFastfood } from "react-icons/md";
+import { MdFastfood, MdTableBar } from "react-icons/md";
+import { RiAdminFill } from "react-icons/ri";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { signoutSuccess } from "../redux/user/userSlice.js";
@@ -68,6 +69,9 @@ function DashSidebar() {
         } else if (actionType === "add-staff") {
           setTab("add-staff");
           navigate("/dashboard?tab=add-staff");
+        }else if (actionType === "add-tables") {
+          setTab("add-tables");
+          navigate("/dashboard?tab=add-tables");
         } else {
           navigate("/dashboard");
         }
@@ -87,7 +91,7 @@ function DashSidebar() {
               <Sidebar.Item
                 active={tab === "profile"}
                 icon={HiUser}
-                label="User"
+                label={currentUser.role === "hotel_admin" ? "Admin" : "User"}
                 labelColor="dark"
                 as="div"
               >
@@ -100,7 +104,7 @@ function DashSidebar() {
                 <Link to="/dashboard?tab=admin-dashboard">
                   <Sidebar.Item
                     active={tab === "admin-dashboard"}
-                    label="Admin"
+                    icon={RiAdminFill}
                     labelColor="dark"
                     as="div"
                   >
@@ -122,11 +126,24 @@ function DashSidebar() {
                   Add Staff
                 </Sidebar.Item>
 
+                <Sidebar.Item
+                  active={tab === "add-tables"}
+                  icon={MdTableBar}
+                  className="cursor-pointer"
+                  onClick={() => {
+                    setShowModal(true);
+                    setPassword("");
+                    setActionType("add-tables");
+                    setTab("add-tables");
+                  }}
+                >
+                  Add Tables
+                </Sidebar.Item>
+
                 <Link to="/dashboard?tab=add-food">
                   <Sidebar.Item
                     active={tab === "add-food"}
                     icon={MdFastfood}
-                    label="Food"
                     labelColor="dark"
                     as="div"
                   >
@@ -135,20 +152,20 @@ function DashSidebar() {
                 </Link>
               </>
             )}
-
-            <Sidebar.Item
-              active={tab === "add-hotel"}
-              icon={HiBuildingOffice2}
-              className="cursor-pointer"
-              onClick={() => {
-                setActionType("add-hotel");
-                setShowModal(true);
-                setPassword("");
-              }}
-            >
-              Add Hotel
-            </Sidebar.Item>
-
+            {currentUser?.role !== "hotel_admin" && (
+              <Sidebar.Item
+                active={tab === "add-hotel"}
+                icon={HiBuildingOffice2}
+                className="cursor-pointer"
+                onClick={() => {
+                  setActionType("add-hotel");
+                  setShowModal(true);
+                  setPassword("");
+                }}
+              >
+                Add Hotel
+              </Sidebar.Item>
+            )}
             <Sidebar.Item
               icon={HiArrowSmRight}
               className="cursor-pointer"
