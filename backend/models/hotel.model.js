@@ -69,6 +69,11 @@ const hotelSchema = new mongoose.Schema({
         type: String,
         default: "https://iadairport.com/images/default-resturant.jpg",
     },
+    numberOfKitchens: {
+      type: Number,
+      default: 0,
+    },
+    kitchens: [String],    
     numberOfChefs: {
         type: Number,
         default: 0,

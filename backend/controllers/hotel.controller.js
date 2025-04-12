@@ -203,9 +203,9 @@ export const addStaff = async(req,res,next) =>{
 
 export const addHotelStructure = async(req, res, next)=>{
   try{
-    const { hotelId, numberOfFloors, floorData } = req.body;
+    const { hotelId, numberOfFloors, floorData, numberOfKitchens } = req.body;
 
-    if(!hotelId || !numberOfFloors || !floorData){
+    if(!hotelId || !numberOfFloors || !floorData || !numberOfKitchens){
       return next(errorHandler(400, "All fields are required."));
     }
     
@@ -252,8 +252,16 @@ export const addHotelStructure = async(req, res, next)=>{
       tables
     });
     }
+
+    const kitchensArray = [];
+    for (let i = 0; i < numberOfKitchens; i++) {
+      kitchensArray.push(`KITCHEN-${(i + 1).toString().padStart(3, "0")}`);
+    }
+
     hotel.numberOfFloors = numberOfFloors;
     hotel.floors = floorsArray;
+    hotel.numberOfKitchens = numberOfKitchens;
+    hotel.kitchens = kitchensArray;
 
     await hotel.save();
     return res.status(200).json({ message: "Structure added successfully!", hotel });

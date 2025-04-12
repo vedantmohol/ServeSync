@@ -17,6 +17,7 @@ export default function AddTables() {
   const [loading, setLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [numberOfKitchens, setNumberOfKitchens] = useState("");
   const navigate = useNavigate();
 
   const handleFloorCountChange = (e) => {
@@ -50,6 +51,7 @@ export default function AddTables() {
         body: JSON.stringify({
           hotelId,
           numberOfFloors: parseInt(numberOfFloors),
+          numberOfKitchens: parseInt(numberOfKitchens),
           floorData: floorData.map((floor) => ({
             numberOfTables: parseInt(floor.numberOfTables),
             numberOfPremiumTables: parseInt(floor.numberOfPremiumTables),
@@ -94,6 +96,18 @@ export default function AddTables() {
             value={hotelId}
             onChange={(e) => setHotelId(e.target.value)}
             required
+          />
+        </div>
+
+        <div>
+          <Label value="Number of Kitchens" />
+          <TextInput
+            type="number"
+            placeholder="e.g. 3"
+            value={numberOfKitchens}
+            onChange={(e) => setNumberOfKitchens(e.target.value)}
+            required
+            min={1}
           />
         </div>
 
@@ -170,7 +184,11 @@ export default function AddTables() {
                   type="number"
                   value={floor.normalCharges}
                   onChange={(e) =>
-                    handleFloorDataChange(index, "normalCharges", e.target.value)
+                    handleFloorDataChange(
+                      index,
+                      "normalCharges",
+                      e.target.value
+                    )
                   }
                   required
                 />
