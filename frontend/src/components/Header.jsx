@@ -30,9 +30,35 @@ function Header() {
     }
   };
 
+  const handleLogoClick = () => {
+    if (!currentUser) {
+      navigate("/");
+      return;
+    }
+  
+    switch (currentUser.role) {
+      case "customer":
+        navigate("/");
+        break;
+      case "chef":
+        navigate("/chef-dashboard");
+        break;
+      case "waiter":
+        navigate("/waiter-dashboard");
+        break;
+      case "hall_manager":
+        navigate("/hall-manager-dashboard");
+        break;
+      case "hotel_admin":
+        navigate("/admin-dashboard");
+        break;
+      default:
+        navigate("/");
+    }
+  };
   return (
     <Navbar className="bg-purple-800 text-white border-b-2 flex flex-wrap justify-between items-center p-4">
-      <Link to="/" className="flex items-center">
+      <Link onClick={handleLogoClick} className="flex items-center">
         <img
           src={ServeSyncLogo}
           alt="ServeSync Logo"
@@ -127,10 +153,10 @@ function Header() {
 
         {currentUser && currentUser.role === "hall_manager" && (
           <>
-            <Navbar.Link as="div" active={path === "/vieworders"}>
-              <Link to="/vieworders">
+            <Navbar.Link as="div" active={path === "/hall-manager-dashboard?tab=take-order"}>
+              <Link to="/hall-manager-dashboard?tab=take-order">
                 <span className="px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg hover:opacity-90 text-white">
-                  View Orders
+                 Take Orders
                 </span>
               </Link>
             </Navbar.Link>

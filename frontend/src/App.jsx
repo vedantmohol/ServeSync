@@ -10,6 +10,8 @@ import AdminPrivateRoute from "./components/AdminPrivateRoute";
 import AdminHomePage from "./pages/AdminHomePage";
 import CustomerPrivateRoute from "./components/CustomerPrivateRoute";
 import Cart from "./pages/Cart";
+import HallManagerPrivateRoute from "./components/HallManagerPrivateRoute";
+import HallManagerDashBoard from "./pages/HallManagerDashBoard";
 
 function App() {
   return (
@@ -24,6 +26,9 @@ function App() {
         </Route>
         <Route element={<AdminPrivateRoute />}>
           <Route path="/admin-home" element={<AdminHomePage/>} />
+        </Route>
+        <Route element={<HallManagerPrivateRoute />}>
+          <Route path="/hall-manager-dashboard" element={<HallManagerDashBoard/>} />
         </Route>
         <Route element={<CustomerPrivateRoute />}>
           <Route path="/cart" element={<Cart/>} />
