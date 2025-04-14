@@ -84,3 +84,24 @@ export const placeOrder = async(req,res,next)=>{
         next(errorHandler(500, error.message || "Failed to place order"));
     }
 }
+
+export const getManagerOrders = async (req, res, next) => {
+    try {
+      const { hotelId, staffId } = req.query;
+  
+      if (!hotelId || !staffId) {
+        return next(errorHandler(400, "Hotel ID and Staff ID are required."));
+      }
+  
+      const hotel = await Hotel.findOne({ hotelId });
+      if (!hotel) return next(errorHandler(404, "Hotel not found."));
+  
+      const managerOrders = (hotel.orders || []).filter(
+        (order) => order.staffId === staffId
+      );
+  
+      res.status(200).json({ orders: managerOrders });
+    } catch (error) {
+      next(errorHandler(500, error.message || "Failed to fetch manager orders"));
+    }
+  };
