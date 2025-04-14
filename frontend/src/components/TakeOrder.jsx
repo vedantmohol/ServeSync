@@ -146,7 +146,7 @@ export default function TakeOrder() {
       } else {
         setOrderSuccess(true);
         setTimeout(
-          () => navigate("/hallmanager-dashboard?tab=hall-manager-dashboard"),
+          () => navigate("/hall-manager-dashboard"),
           1500
         );
       }
