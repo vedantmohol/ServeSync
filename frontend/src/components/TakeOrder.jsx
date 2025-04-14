@@ -121,18 +121,19 @@ export default function TakeOrder() {
     setErrorMessage(null);
 
     try {
-      const res = await fetch("/api/order/place", {
+      const res = await fetch("/api/order/placeOrder", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           hotelId,
-          hallManagerEmail: currentUser.email,
+          staffId: currentUser.staffId,
           floorId,
           tableId,
           kitchenId,
           items: selectedFoods.map((item) => ({
             foodName: item.name,
             quantity: item.quantity,
+            price: item.price,
           })),
         }),
       });
