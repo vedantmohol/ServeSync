@@ -105,3 +105,56 @@ export const getManagerOrders = async (req, res, next) => {
       next(errorHandler(500, error.message || "Failed to fetch manager orders"));
     }
   };
+
+  export const updateOrder = async (req, res, next) => {
+    try {
+      const { hotelId, orderId, items } = req.body;
+  
+      if (!hotelId || !orderId || !items || !Array.isArray(items)) {
+        return next(errorHandler(400, "Required fields are missing or invalid."));
+      }
+  
+      const hotel = await Hotel.findOne({ hotelId });
+      if (!hotel) {
+        return next(errorHandler(404, "Hotel not found."));
+      }
+  
+      const orderIndex = hotel.orders.findIndex(
+        (order) => order._id.toString() === orderId
+      );
+  
+      if (orderIndex === -1) {
+        return next(errorHandler(404, "Order not found."));
+      }
+  
+      const existingOrder = hotel.orders[orderIndex];
+  
+      items.forEach((newItem) => {
+        const existingItem = existingOrder.items.find(
+          (item) => item.foodName === newItem.foodName
+        );
+  
+        if (existingItem) {
+          existingItem.quantity += newItem.quantity;
+          existingItem.amount += newItem.quantity * newItem.price;
+        } else {
+          existingOrder.items.push({
+            foodName: newItem.foodName,
+            quantity: newItem.quantity,
+            amount: newItem.quantity * newItem.price,
+          });
+        }
+      });
+  
+      existingOrder.totalAmount = existingOrder.items.reduce(
+        (sum, item) => sum + item.amount,
+        0
+      );
+  
+      await hotel.save();
+  
+      return res.status(200).json({ message: "Order updated successfully", updatedOrder: existingOrder });
+    } catch (error) {
+      next(errorHandler(500, error.message || "Failed to update the order"));
+    }
+  };

@@ -49,7 +49,6 @@ const orderSchema = new mongoose.Schema(
     ],
     totalAmount: { type: Number, required: true },
   },
-  { _id: false }
 );
 
 const billSchema = new mongoose.Schema(
