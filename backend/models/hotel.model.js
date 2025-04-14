@@ -34,6 +34,41 @@ const floorSchema = new mongoose.Schema({
   tables: [tableSchema]
 }, { _id: false });
 
+const orderSchema = new mongoose.Schema(
+  {
+    staffId: { type: String, required: true },
+    floorId: { type: String, required: true },
+    tableId: { type: String, required: true },
+    kitchenId: { type: String, required: true },
+    items: [
+      {
+        foodName: { type: String },
+        quantity: { type: Number },
+        amount: { type: Number },
+      },
+    ],
+    totalAmount: { type: Number, required: true },
+  },
+  { _id: false }
+);
+
+const billSchema = new mongoose.Schema(
+  {
+    billNo: { type: String, required: true },
+    createdAt: { type: Date, default: Date.now },
+    subTotal: { type: Number, required: true },
+    gst: { type: Number, required: true },
+    sgst: { type: Number, required: true },
+    grandTotal: { type: Number, required: true },
+    paymentMode: {
+      type: String,
+      enum: ["Cash", "Card", "UPI"],
+      required: true,
+    },
+  },
+  { _id: false }
+);
+
 const hotelSchema = new mongoose.Schema({
     adminName: {
         type: String,
@@ -127,6 +162,9 @@ const hotelSchema = new mongoose.Schema({
       default: 0,
     },
     floors: [floorSchema],
+    orders: [orderSchema],
+    bills: [billSchema],
+    totalRevenue: { type: Number, default: 0 },  
     hotelId: {
         type: String,
         unique: true,
