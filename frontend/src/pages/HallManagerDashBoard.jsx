@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import TakeOrder from "../components/TakeOrder";
 import OrderCard from "../components/OrderCard";
+import AddOrder from "../components/AddOrder";
 
 function HallManagerDashBoard() {
   const location = useLocation();
@@ -40,6 +41,8 @@ function HallManagerDashBoard() {
     <div className="p-6 max-w-7xl mx-auto">
       {tab === "take-order" ? (
         <TakeOrder />
+      ) : tab === "add-order" ? ( 
+        <AddOrder />
       ) : (
         <>
           <h2 className="text-2xl font-semibold mb-6 text-center text-purple-800">

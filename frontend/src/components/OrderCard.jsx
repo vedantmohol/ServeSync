@@ -1,7 +1,10 @@
-import React from "react";
+import React, { use } from "react";
 import { Button } from "flowbite-react";
+import { Navigate, useNavigate } from "react-router-dom";
 
 export default function OrderCard({ order }) {
+    const navigate = useNavigate();
+
   return (
     <div className="w-full md:w-80 bg-white shadow-lg rounded-lg p-4 border border-purple-200">
       <h3 className="text-lg font-semibold mb-2 text-purple-700">
@@ -21,7 +24,13 @@ export default function OrderCard({ order }) {
         Total: ₹{order.totalAmount}
       </p>
       <div className="flex justify-between mt-4">
-        <Button size="sm" color="purple" pill>
+        <Button size="sm" color="purple"
+        onClick={() =>
+            navigate(
+              `/hall-manager-dashboard?tab=add-order&orderId=${order._id}`
+            )
+          }
+        pill>
           Add Food
         </Button>
         <Button size="sm" color="success" pill>
