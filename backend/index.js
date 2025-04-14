@@ -5,6 +5,7 @@ import customerRoutes from './routes/customer.routes.js';
 import authRoutes from './routes/auth.routes.js';
 import foodRoutes from "./routes/food.routes.js";
 import hotelRoutes from './routes/hotel.routes.js';
+import orderRoutes from './routes/order.routes.js';
 import cookieParser from 'cookie-parser';
 
 dotenv.config();
@@ -27,6 +28,7 @@ app.use('/api/customer',customerRoutes);
 app.use("/api/auth",authRoutes);
 app.use("/api/hotel",hotelRoutes);
 app.use("/api/food", foodRoutes);
+app.use("/api/order",orderRoutes);
 
 app.use((err,req,res,next) =>{
     const statusCode = err.statusCode || 500;

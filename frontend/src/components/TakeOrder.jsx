@@ -33,6 +33,11 @@ export default function TakeOrder() {
         if (res.ok) {
           setFloors(data.floors);
           setKitchens(data.kitchens);
+
+          if (data.floors.length === 1) {
+            setFloorId(data.floors[0].floorId);
+            setTables(data.floors[0].tables || []);
+          }
         }
       } catch (err) {
         console.error("Error fetching structure:", err);
@@ -180,7 +185,7 @@ export default function TakeOrder() {
             <option value="">-- Select Table --</option>
             {tables.map((table) => (
               <option key={table.tableId} value={table.tableId}>
-                {table.tableId}
+                {table.tableId}{table.isBooked === 'Yes' ? 'Booked' : ''}
               </option>
             ))}
           </Select>
