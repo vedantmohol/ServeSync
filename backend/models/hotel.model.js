@@ -69,117 +69,121 @@ const billSchema = new mongoose.Schema(
 );
 
 const hotelSchema = new mongoose.Schema({
-    adminName: {
-        type: String,
-        required: true,
-    },
-    phone: {
-        type: String,
-        required: true,
-    },
-    adminEmail:{
-        type: String,
-        unique: true,
-        required: true,
-    },
-    hotelName: {
-        type: String,
-        required: true,
-    },
-    hotelType: {
-        type: String,
-        enum: ['veg', 'non-veg', 'veg-nonveg'],
-        required: true,
-    },
-    hotelAddress: {
-        type: String,
-        required: true,
-    },
-    hotelPassword: {
-        type: String,
-        required: true,
-    },
-    hotelPhoto: {
-        type: String,
-        default: "https://iadairport.com/images/default-resturant.jpg",
-    },
-    numberOfKitchens: {
-      type: Number,
-      default: 0,
-    },
-    kitchens: [String],    
-    numberOfChefs: {
-        type: Number,
-        default: 0,
-    },
-    numberOfWaiters: {
-        type: Number,
-        default: 0,
-    },
-    numberOfHallManagers: {
-        type: Number,
-        default: 0,
+  adminName: {
+    type: String,
+    required: true,
+  },
+  phone: {
+    type: String,
+    required: true,
+  },
+  adminEmail: {
+    type: String,
+    unique: true,
+    required: true,
+  },
+  hotelName: {
+    type: String,
+    required: true,
+  },
+  hotelType: {
+    type: String,
+    enum: ["veg", "non-veg", "veg-nonveg"],
+    required: true,
+  },
+  hotelAddress: {
+    type: String,
+    required: true,
+  },
+  hotelPassword: {
+    type: String,
+    required: true,
+  },
+  hotelPhoto: {
+    type: String,
+    default: "https://iadairport.com/images/default-resturant.jpg",
+  },
+  numberOfKitchens: {
+    type: Number,
+    default: 0,
+  },
+  kitchens: [String],
+  numberOfChefs: {
+    type: Number,
+    default: 0,
+  },
+  numberOfWaiters: {
+    type: Number,
+    default: 0,
+  },
+  numberOfHallManagers: {
+    type: Number,
+    default: 0,
+  },
+  chefs: [
+    {
+      name: String,
+      email: String,
+      phone: String,
+      staffID: String,
+      kitchenId: String,
+      createdAt: {
+        type: Date,
+        default: Date.now,
       },
-      chefs: [
-          {
-            name: String,
-            email: String,
-            phone: String,
-            staffID: String,
-            kitchenId: String,
-            createdAt: {
-              type: Date,
-              default: Date.now,
-            },
-          }
-        ],
-        hallManagers: [
-          {
-            name: String,
-            email: String,
-            phone: String,
-            staffID: String,
-            createdAt: {
-              type: Date,
-              default: Date.now,
-            },
-          }
-        ],
-        waiters: [
-          {
-            name: String,
-            email: String,
-            phone: String,
-            staffID: String,
-            createdAt: {
-              type: Date,
-              default: Date.now,
-            },
-          }
-        ],
-    numberOfFloors: {
-      type: Number,
-      default: 0,
     },
-    floors: [floorSchema],
-    orders: [orderSchema],
-    bills: [billSchema],
-    totalRevenue: { type: Number, default: 0 },  
-    hotelId: {
-        type: String,
-        unique: true,
-        default: () =>{
-            const now = new Date();
-            const yyyy = now.getFullYear();
-            const mm = String(now.getMonth() + 1).padStart(2, '0');
-            const dd = String(now.getDate()).padStart(2, '0');
-            const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-            const shortId = Array.from({ length: 2 }, () =>
-                letters.charAt(Math.floor(Math.random() * letters.length))
-              ).join('');
-            return `${yyyy}${mm}${dd}${shortId}`;
-        },
+  ],
+  hallManagers: [
+    {
+      name: String,
+      email: String,
+      phone: String,
+      staffID: String,
+      createdAt: {
+        type: Date,
+        default: Date.now,
+      },
     },
+  ],
+  waiters: [
+    {
+      name: String,
+      email: String,
+      phone: String,
+      staffID: String,
+      createdAt: {
+        type: Date,
+        default: Date.now,
+      },
+    },
+  ],
+  numberOfFloors: {
+    type: Number,
+    default: 0,
+  },
+  floors: [floorSchema],
+  orders: [orderSchema],
+  bills: [billSchema],
+  totalRevenue: {
+    totalAmount: { type: Number, default: 0 },
+    gstAmount: { type: Number, default: 0 },
+    revenue: { type: Number, default: 0 },
+  },
+  hotelId: {
+    type: String,
+    unique: true,
+    default: () => {
+      const now = new Date();
+      const yyyy = now.getFullYear();
+      const mm = String(now.getMonth() + 1).padStart(2, "0");
+      const dd = String(now.getDate()).padStart(2, "0");
+      const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      const shortId = Array.from({ length: 2 }, () =>
+        letters.charAt(Math.floor(Math.random() * letters.length))
+      ).join("");
+      return `${yyyy}${mm}${dd}${shortId}`;
+    },
+  },
 });
 
 const Hotel = mongoose.model("Hotel",hotelSchema);

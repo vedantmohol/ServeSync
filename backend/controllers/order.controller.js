@@ -213,3 +213,92 @@ export const markOrderCompleted = async (req, res, next) => {
     next(errorHandler(500, error.message || "Failed to mark order as completed"));
   }
 };
+
+
+export const generateBill = async (req, res, next) => {
+  try {
+    const { hotelId, orderId, paymentMode } = req.body;
+
+    if (!hotelId || !orderId || !paymentMode) {
+      return next(errorHandler(400, "Hotel ID, Order ID, and payment mode are required."));
+    }
+
+    const hotel = await Hotel.findOne({ hotelId });
+    if (!hotel) return next(errorHandler(404, "Hotel not found."));
+
+    const orderIndex = hotel.orders.findIndex(order => order._id.toString() === orderId);
+    if (orderIndex === -1) {
+      return next(errorHandler(404, "Order not found."));
+    }
+
+    const order = hotel.orders[orderIndex];
+    const subTotal = order.totalAmount;
+
+    const totalStaff =
+      hotel.numberOfChefs + hotel.numberOfWaiters + hotel.numberOfHallManagers;
+
+    let gstRate = 2.5;
+    if (totalStaff > 10) gstRate = 12.0;
+    else if (totalStaff > 5) gstRate = 5.0;
+
+    const gstAmount = (gstRate / 100) * subTotal;
+    const grandTotal = Math.round(subTotal + 2 * gstAmount);
+
+    const lastBill = hotel.bills?.at(-1)?.billNo;
+    const lastNum = lastBill ? parseInt(lastBill.split("-")[1]) : 109999;
+    const nextNum = String(lastNum + 1).padStart(6, "0");
+    const billNo = `${hotelId}-${nextNum}`;
+
+    const newBill = {
+      billNo,
+      createdAt: new Date(),
+      subTotal,
+      gst: gstRate,
+      sgst: gstRate,
+      grandTotal,
+      paymentMode,
+    };
+
+    hotel.bills.push(newBill);
+
+    if (
+      !hotel.totalRevenue ||
+      typeof hotel.totalRevenue.totalAmount !== "number" ||
+      typeof hotel.totalRevenue.gstAmount !== "number" ||
+      typeof hotel.totalRevenue.revenue !== "number"
+    ) {
+      hotel.totalRevenue = {
+        totalAmount: 0,
+        gstAmount: 0,
+        revenue: 0,
+      };
+    }
+
+    hotel.totalRevenue.totalAmount += subTotal;
+    hotel.totalRevenue.gstAmount += 2 * gstAmount;
+    hotel.totalRevenue.revenue += grandTotal;
+
+    hotel.orders.splice(orderIndex, 1);
+
+    const floor = hotel.floors.find((f) => f.floorId === order.floorId);
+    if (floor) {
+      const table = floor.tables.find((t) => t.tableId === order.tableId);
+      if(table){
+        table.isBooked = "No";
+      }
+    }
+    
+    await hotel.save();
+
+    res.status(200).json({
+      message: "Bill generated successfully",
+      billNo,
+      subTotal,
+      gst: gstRate,
+      sgst: gstRate,
+      grandTotal,
+    });
+  } catch (error) {
+    next(errorHandler(500, error.message || "Failed to generate bill."));
+  }
+};
