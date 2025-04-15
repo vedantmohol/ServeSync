@@ -12,6 +12,8 @@ import CustomerPrivateRoute from "./components/CustomerPrivateRoute";
 import Cart from "./pages/Cart";
 import HallManagerPrivateRoute from "./components/HallManagerPrivateRoute";
 import HallManagerDashBoard from "./pages/HallManagerDashBoard";
+import ChefPrivateRoute from "./components/ChefPrivateRoute";
+import ChefDashBoard from "./pages/ChefDashBoard";
 
 function App() {
   return (
@@ -29,6 +31,9 @@ function App() {
         </Route>
         <Route element={<HallManagerPrivateRoute />}>
           <Route path="/hall-manager-dashboard" element={<HallManagerDashBoard/>} />
+        </Route>
+        <Route element={<ChefPrivateRoute />}>
+          <Route path="/chef-dashboard" element={<ChefDashBoard/>} />
         </Route>
         <Route element={<CustomerPrivateRoute />}>
           <Route path="/cart" element={<Cart/>} />
