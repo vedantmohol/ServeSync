@@ -174,6 +174,16 @@ export const addStaff = async(req,res,next) =>{
     user.staffId = staffID;
     await user.save();
 
+    let assignedKitchen = "";
+    if (role === 'chef') {
+      if (!hotel.kitchens || hotel.kitchens.length === 0) {
+        return next(errorHandler(400, 'No kitchens available to assign to chef.'));
+      }
+
+      const chefIndex = hotel.chefs.length;
+      assignedKitchen = hotel.kitchens[chefIndex % hotel.kitchens.length];
+    }
+
     const staffInfo = {
       name: user.username,
       email: user.email,
@@ -183,6 +193,7 @@ export const addStaff = async(req,res,next) =>{
     };
 
     if (role === 'chef') {
+      staffInfo.kitchenId = assignedKitchen;
       hotel.chefs.push(staffInfo);
       hotel.numberOfChefs += 1;
     } else if (role === 'hall_manager') {

@@ -158,3 +158,58 @@ export const getManagerOrders = async (req, res, next) => {
       next(errorHandler(500, error.message || "Failed to update the order"));
     }
   };
+
+export const getChefOrders = async (req, res, next) => {
+  try {
+    const { hotelId, staffId } = req.query;
+
+    if (!hotelId || !staffId) {
+      return next(errorHandler(400, "Hotel ID and Staff ID are required."));
+    }
+
+    const hotel = await Hotel.findOne({ hotelId });
+    if (!hotel) return next(errorHandler(404, "Hotel not found."));
+
+    const chef = hotel.chefs.find((c) => c.staffID === staffId);
+    if (!chef) return next(errorHandler(404, "Chef not found in this hotel."));
+
+    const kitchenId = chef.kitchenId;
+    if (!kitchenId) return next(errorHandler(400, "No kitchen assigned to this chef."));
+
+    const chefOrders = hotel.orders?.filter((order) => order.kitchenId === kitchenId) || [];
+
+    res.status(200).json({ orders: chefOrders });
+  } catch (error) {
+    next(errorHandler(500, error.message || "Failed to fetch chef's orders"));
+  }
+};
+
+export const markOrderCompleted = async (req, res, next) => {
+  try {
+    const { hotelId, orderId } = req.body;
+
+    if (!hotelId || !orderId) {
+      return next(errorHandler(400, "Hotel ID and Order ID are required"));
+    }
+
+    const hotel = await Hotel.findOne({ hotelId });
+    if (!hotel) {
+      return next(errorHandler(404, "Hotel not found"));
+    }
+
+    const order = hotel.orders.id(orderId);
+    if (!order) {
+      return next(errorHandler(404, "Order not found"));
+    }
+
+    order.items = order.items.map(item => ({
+      ...item,
+      quantity: 0
+    }));
+
+    await hotel.save();
+    res.status(200).json({ message: "Order marked as completed", order });
+  } catch (error) {
+    next(errorHandler(500, error.message || "Failed to mark order as completed"));
+  }
+};

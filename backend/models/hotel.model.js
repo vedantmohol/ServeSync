@@ -126,6 +126,7 @@ const hotelSchema = new mongoose.Schema({
             email: String,
             phone: String,
             staffID: String,
+            kitchenId: String,
             createdAt: {
               type: Date,
               default: Date.now,
