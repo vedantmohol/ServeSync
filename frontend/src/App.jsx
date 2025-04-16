@@ -17,6 +17,7 @@ import ChefDashBoard from "./pages/ChefDashBoard";
 import RestaurantList from "./pages/RestaurantList";
 import ReserveTableList from "./pages/ReserveTableList";
 import FooterCom from "./components/Footer";
+import ViewBills from "./pages/ViewBills";
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
         </Route>
         <Route element={<AdminPrivateRoute />}>
           <Route path="/admin-home" element={<AdminHomePage/>} />
+          <Route path="/viewbills" element={<ViewBills/>} />
         </Route>
         <Route element={<HallManagerPrivateRoute />}>
           <Route path="/hall-manager-dashboard" element={<HallManagerDashBoard/>} />
