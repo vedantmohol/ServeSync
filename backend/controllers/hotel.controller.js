@@ -281,3 +281,50 @@ export const addHotelStructure = async(req, res, next)=>{
     next(errorHandler(500, error.message || 'Something went wrong'));
   }
 }
+
+export const getHotelBills = async (req, res, next) => {
+  try {
+    const phone = req.query.phone?.trim();
+
+    if (!phone) {
+      return next(errorHandler(400, "Phone number is required"));
+    }
+
+    const hotel = await Hotel.findOne({ phone });
+
+    if (!hotel) {
+      return next(errorHandler(404, "Hotel not found with this phone number"));
+    }
+
+    const bills = hotel.bills || [];
+
+    const totalAmount = bills.reduce((sum, bill) => sum + bill.subTotal, 0);
+    const gstAmount = bills.reduce((sum, bill) => sum + bill.gst + bill.sgst, 0);
+    const revenue = bills.reduce((sum, bill) => sum + bill.grandTotal, 0);
+
+    const monthWiseBills = {};
+
+    for (const bill of bills) {
+      const createdAt = new Date(bill.createdAt);
+      const monthKey = `${createdAt.toLocaleString('default', {
+        month: 'long',
+      })} ${createdAt.getFullYear()}`;
+
+      if (!monthWiseBills[monthKey]) {
+        monthWiseBills[monthKey] = [];
+      }
+
+      monthWiseBills[monthKey].push(bill);
+    }
+
+    res.status(200).json({
+      totalAmount,
+      gstAmount,
+      revenue,
+      bills: monthWiseBills,
+    });
+  } catch (err) {
+    console.error("Error in getHotelBills:", err);
+    return next(errorHandler(500, "Server error while fetching hotel bills"));
+  }
+};
