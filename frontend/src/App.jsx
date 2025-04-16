@@ -16,6 +16,7 @@ import ChefPrivateRoute from "./components/ChefPrivateRoute";
 import ChefDashBoard from "./pages/ChefDashBoard";
 import RestaurantList from "./pages/RestaurantList";
 import ReserveTableList from "./pages/ReserveTableList";
+import FooterCom from "./components/Footer";
 
 function App() {
   return (
@@ -43,6 +44,7 @@ function App() {
           <Route path="/cart" element={<Cart/>} />
         </Route>
       </Routes>
+      <FooterCom/>
     </BrowserRouter>
   );
 }
