@@ -9,13 +9,13 @@ export default function HotelCard({ hotel }) {
   const navigate = useNavigate();
   const { currentUser } = useSelector((state) => state.user);
 
-  const handleDetailHotelPage = () =>{
+  const handleDetailHotelPage = () => {
     if (!currentUser) {
-        setShowModal(true);
-      } else {
-        navigate('');
-      }
-  }
+      setShowModal(true);
+    } else {
+      navigate('/restaurants?tab=restaurant', { state: { hotel } });
+    }
+  };
 
   return (
     <>

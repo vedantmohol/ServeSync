@@ -127,22 +127,22 @@ function Header() {
       <Navbar.Collapse>
         {currentUser && currentUser.role === "customer" && (
           <>
-            <Navbar.Link as="div" active={path === "/reservetable"}>
+            <Navbar.Link as="div" >
               <Link to="/reservetable">
                 <span className="px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg hover:opacity-90 text-white">
                   Book Table
                 </span>
               </Link>
             </Navbar.Link>
-            <Navbar.Link as="div" active={path === "/restaurants"}>
+            <Navbar.Link as="div" >
               <Link to="/restaurants">
                 <span className="px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg hover:opacity-90 text-white">
                   Restaurants
                 </span>
               </Link>
             </Navbar.Link>
-            <Navbar.Link as="div" active={path === "/paybill"}>
-              <Link to="/paybill">
+            <Navbar.Link as="div" >
+              <Link to="/cart">
                 <span className="px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg hover:opacity-90 text-white">
                   Pay Bill
                 </span>
