@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { Modal, Button } from 'flowbite-react';
 
-export default function HotelCard({ hotel }) {
+export default function HotelCard({ hotel, mode = 'restaurant' }) {
   const { hotelPhoto, hotelName, hotelType, phone } = hotel;
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
@@ -13,10 +13,16 @@ export default function HotelCard({ hotel }) {
     if (!currentUser) {
       setShowModal(true);
     } else {
-      navigate('/restaurants?tab=restaurant', { state: { hotel } });
-    }
-  };
+      const tab = mode === "reserve" ? "reserve-table" : "restaurant";
+    const path = mode === "reserve" ? "/reservetable" : "/restaurants";
 
+    navigate(`${path}?tab=${tab}&hotelName=${encodeURIComponent(hotelName)}`, {
+      state: { hotel },
+    })
+  };
+}
+
+const buttonText = mode === 'reserve' ? 'Book Table' : 'View Restaurant';
   return (
     <>
     <div className='group relative w-full border border-purple-500 hover:border-2 h-[370px] overflow-hidden rounded-lg sm:w-[300px] md:w-[320px] transition-all mx-auto'>
@@ -33,7 +39,7 @@ export default function HotelCard({ hotel }) {
             onClick={handleDetailHotelPage}
             className='mt-2 border border-purple-500 text-purple-500 hover:bg-purple-500 hover:text-white transition-all duration-300 text-center py-2 rounded-md'
           >
-            View Restaurant
+            {buttonText}
           </button>
         </div>
       </div>

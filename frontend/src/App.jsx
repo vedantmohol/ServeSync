@@ -15,6 +15,7 @@ import HallManagerDashBoard from "./pages/HallManagerDashBoard";
 import ChefPrivateRoute from "./components/ChefPrivateRoute";
 import ChefDashBoard from "./pages/ChefDashBoard";
 import RestaurantList from "./pages/RestaurantList";
+import ReserveTableList from "./pages/ReserveTableList";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
         <Route path="/sign-in" element={<SignIn />} />
         <Route path="/sign-up" element={<SignUp />} />
         <Route path="/restaurants" element={<RestaurantList />} />
+        <Route path="/reservetable" element={<ReserveTableList/>}/>
         <Route element={<PrivateRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />
         </Route>
