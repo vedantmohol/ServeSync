@@ -302,3 +302,65 @@ export const generateBill = async (req, res, next) => {
     next(errorHandler(500, error.message || "Failed to generate bill."));
   }
 };
+
+export const placeOnlineOrder = async (req, res, next) => {
+  try {
+    const { adminEmail, items } = req.body;
+
+    if (!adminEmail || !Array.isArray(items) || items.length === 0) {
+      return next(errorHandler(400, "Admin email and food items are required."));
+    }
+
+    const hotel = await Hotel.findOne({ adminEmail });
+    if (!hotel) return next(errorHandler(404, "Hotel not found."));
+
+    const staffId = hotel.hallManagers?.[0]?.staffID;
+    if (!staffId) return next(errorHandler(404, "No hall manager assigned."));
+
+    const kitchenId = hotel.kitchens?.[0] || "Online";
+
+    let totalAmount = 0;
+    const orderItems = items.map((item) => {
+      const amount = item.price * item.quantity;
+      totalAmount += amount;
+      return {
+        foodName: item.foodName,
+        quantity: item.quantity,
+        amount,
+      };
+    });
+
+    const totalStaff =
+      hotel.numberOfChefs + hotel.numberOfWaiters + hotel.numberOfHallManagers;
+    let gstRate = 2.5;
+    if (totalStaff > 10) gstRate = 12.0;
+    else if (totalStaff > 5) gstRate = 5.0;
+
+    const gstAmount = (gstRate / 100) * totalAmount;
+    const grandTotal = Math.round(totalAmount + 2 * gstAmount); // CGST + SGST
+
+    const onlineOrder = {
+      staffId,
+      floorId: null,
+      tableId: null,
+      kitchenId,
+      items: orderItems,
+      totalAmount: grandTotal,
+      orderType: "Online",
+      createdAt: new Date(),
+    };
+
+    hotel.orders.push(onlineOrder);
+    await hotel.save();
+
+    const estimatedTime = items.length > 3 ? 45 : 30;
+
+    res.status(200).json({
+      success: true,
+      message: `Order placed successfully! Expected in ${estimatedTime} minutes.`,
+      estimatedTime,
+    });
+  } catch (error) {
+    next(errorHandler(500, error.message || "Failed to place online order."));
+  }
+};

@@ -36,9 +36,14 @@ const floorSchema = new mongoose.Schema({
 
 const orderSchema = new mongoose.Schema(
   {
+    orderType: {
+      type: String,
+      enum: ["Offline", "Online"],
+      default: "Offline",
+    },
     staffId: { type: String, required: true },
-    floorId: { type: String, required: true },
-    tableId: { type: String, required: true },
+    floorId: { type: String, default: null },
+    tableId: { type: String, default: null },
     kitchenId: { type: String, required: true },
     items: [
       {
