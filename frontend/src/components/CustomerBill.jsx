@@ -4,7 +4,7 @@ import { Button } from "flowbite-react";
 import { useNavigate } from "react-router-dom";
 import { clearCurrentOrder } from "../redux/order/orderSlice";
 
-function CustomerBill() {
+function CustomerBill({ setTab }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { currentOrder, additionalItems } = useSelector((state) => state.order);
@@ -60,7 +60,7 @@ function CustomerBill() {
         <Button
           className="mt-6 w-full"
           gradientDuoTone="purpleToBlue"
-          onClick={() => navigate("/payment")}
+          onClick={() => setTab("confirm-order")}
           outline
         >
           Proceed to Pay
