@@ -1,4 +1,5 @@
 import Hotel from "../models/hotel.model.js";
+import User from "../models/user.model.js";
 import { errorHandler } from "../utils/error.js";
 
 export const getOrderStructure = async (req, res, next) =>{
@@ -305,14 +306,17 @@ export const generateBill = async (req, res, next) => {
 
 export const placeOnlineOrder = async (req, res, next) => {
   try {
-    const { adminEmail, items } = req.body;
+    const { adminEmail, items, userEmail } = req.body;
 
-    if (!adminEmail || !Array.isArray(items) || items.length === 0) {
-      return next(errorHandler(400, "Admin email and food items are required."));
+    if (!adminEmail || !Array.isArray(items) || items.length === 0 || !userEmail) {
+      return next(errorHandler(400, "Admin email, food items, and user email are required."));
     }
 
     const hotel = await Hotel.findOne({ adminEmail });
     if (!hotel) return next(errorHandler(404, "Hotel not found."));
+
+    const customer = await User.findOne({ email: userEmail });
+    if (!customer) return next(errorHandler(404, "Customer not found."));
 
     const staffId = hotel.hallManagers?.[0]?.staffID;
     if (!staffId) return next(errorHandler(404, "No hall manager assigned."));
@@ -330,16 +334,18 @@ export const placeOnlineOrder = async (req, res, next) => {
       };
     });
 
-    const totalStaff =
-      hotel.numberOfChefs + hotel.numberOfWaiters + hotel.numberOfHallManagers;
+    const totalStaff = hotel.numberOfChefs + hotel.numberOfWaiters + hotel.numberOfHallManagers;
+
     let gstRate = 2.5;
     if (totalStaff > 10) gstRate = 12.0;
     else if (totalStaff > 5) gstRate = 5.0;
 
     const gstAmount = (gstRate / 100) * totalAmount;
-    const grandTotal = Math.round(totalAmount + 2 * gstAmount); // CGST + SGST
+    const grandTotal = Math.round(totalAmount + 2 * gstAmount);
 
-    const onlineOrder = {
+    const now = new Date();
+
+    const hotelOrder = {
       staffId,
       floorId: null,
       tableId: null,
@@ -347,11 +353,21 @@ export const placeOnlineOrder = async (req, res, next) => {
       items: orderItems,
       totalAmount: grandTotal,
       orderType: "Online",
-      createdAt: new Date(),
+      createdAt: now,
     };
 
-    hotel.orders.push(onlineOrder);
+    const userOrder = {
+      restaurantName: hotel.hotelName,
+      createdAt: now,
+      items: orderItems,
+      amount: grandTotal,
+    };
+
+    hotel.orders.push(hotelOrder);
     await hotel.save();
+
+    customer.orders.push(userOrder);
+    await customer.save();
 
     const estimatedTime = items.length > 3 ? 45 : 30;
 
@@ -438,5 +454,25 @@ export const unbookTable = async (req, res, next) => {
     });
   } catch (err) {
     next(errorHandler(500, err.message || "Failed to unbook table"));
+  }
+};
+
+export const getOrderHistory = async (req, res, next) => {
+  try {
+    const { email } = req.query;
+
+    if (!email) return next(errorHandler(400, "Email is required"));
+
+    const user = await User.findOne({ email });
+
+    if (!user || !user.orders || user.orders.length === 0) {
+      return res.status(200).json({ orders: [] });
+    }
+
+    const sortedOrders = user.orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    res.status(200).json({ orders: sortedOrders });
+
+  } catch (err) {
+    next(errorHandler(500, err.message || "Failed to fetch order history"));
   }
 };
