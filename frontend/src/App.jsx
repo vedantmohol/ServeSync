@@ -18,6 +18,7 @@ import RestaurantList from "./pages/RestaurantList";
 import ReserveTableList from "./pages/ReserveTableList";
 import FooterCom from "./components/Footer";
 import ViewBills from "./pages/ViewBills";
+import ManageTables from "./pages/ManageTables";
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
         </Route>
         <Route element={<HallManagerPrivateRoute />}>
           <Route path="/hall-manager-dashboard" element={<HallManagerDashBoard/>} />
+          <Route path="/managetables" element={<ManageTables/>} />
         </Route>
         <Route element={<ChefPrivateRoute />}>
           <Route path="/chef-dashboard" element={<ChefDashBoard/>} />
