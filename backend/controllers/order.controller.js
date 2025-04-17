@@ -404,3 +404,39 @@ export const bookTable = async (req, res, next) => {
     next(errorHandler(500, error.message || "Failed to book table"));
   }
 };
+
+export const unbookTable = async (req, res, next) => {
+  try {
+    const { hotelId, floorId, tableId } = req.body;
+
+    if (!hotelId || !floorId || !tableId) {
+      return next(errorHandler(400, "Missing required parameters"));
+    }
+
+    const hotel = await Hotel.findOne({ hotelId });
+
+    if (!hotel) return next(errorHandler(404, "Hotel not found"));
+
+    const floor = hotel.floors.find((f) => f.floorId === floorId);
+    if (!floor) return next(errorHandler(404, "Floor not found"));
+
+    const table = floor.tables.find((t) => t.tableId === tableId);
+    if (!table) return next(errorHandler(404, "Table not found"));
+
+    table.isBooked = "No";
+    table.date = null;
+    table.time = null;
+    table.phone = null;
+    table.username = null;
+
+    await hotel.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Table unbooked successfully",
+      updatedTable: table,
+    });
+  } catch (err) {
+    next(errorHandler(500, err.message || "Failed to unbook table"));
+  }
+};
