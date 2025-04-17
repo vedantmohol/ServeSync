@@ -364,3 +364,43 @@ export const placeOnlineOrder = async (req, res, next) => {
     next(errorHandler(500, error.message || "Failed to place online order."));
   }
 };
+
+export const bookTable = async (req, res, next) => {
+  try {
+    const { hotelName, floorId, tableId, date, time, phone, username } = req.body;
+
+    if (!hotelName || !floorId || !tableId || !date || !time || !phone || !username){
+      return next(errorHandler(400, "All booking fields are required"));
+    }
+
+    const hotel = await Hotel.findOne({ hotelName });
+
+    if (!hotel) return next(errorHandler(404, "Hotel not found"));
+
+    const floor = hotel.floors.find(f => f.floorId === floorId);
+    if (!floor) return next(errorHandler(404, "Floor not found"));
+
+    const table = floor.tables.find(t => t.tableId === tableId);
+    if (!table) return next(errorHandler(404, "Table not found"));
+
+    if (table.isBooked === "Yes") {
+      return next(errorHandler(400, "Table is already booked"));
+    }
+
+    table.isBooked = "Yes";
+    table.date = date;
+    table.time = time;
+    table.phone = phone;
+    table.username = username;
+
+    await hotel.save();
+
+    res.status(200).json({
+      message: "Table booked successfully",
+      updatedTable: table,
+    });
+
+  } catch (error) {
+    next(errorHandler(500, error.message || "Failed to book table"));
+  }
+};

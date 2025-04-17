@@ -22,7 +22,23 @@ const tableSchema = new mongoose.Schema({
   },
   charges: {
     type: Number,
-  }
+  },
+  date: {
+    type: String,
+    default: null,
+  },
+  time: {
+    type: String,
+    default: null,
+  },
+  phone: {
+    type: String,
+    default: null,
+  },
+  username: {
+    type: String,
+    default: null,
+  },
 }, { _id: false });
 
 const floorSchema = new mongoose.Schema({

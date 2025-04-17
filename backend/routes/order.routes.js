@@ -1,5 +1,5 @@
 import express from "express";
-import { generateBill, getChefOrders, getManagerOrders, getOrderStructure, markOrderCompleted, placeOnlineOrder, placeOrder, updateOrder } from "../controllers/order.controller.js";
+import { bookTable, generateBill, getChefOrders, getManagerOrders, getOrderStructure, markOrderCompleted, placeOnlineOrder, placeOrder, updateOrder } from "../controllers/order.controller.js";
 
 const router = express.Router();
 
@@ -11,5 +11,6 @@ router.get("/getChefOrders", getChefOrders);
 router.patch("/markCompleted", markOrderCompleted);
 router.post("/generateBill",generateBill);
 router.post("/place-online", placeOnlineOrder);
+router.put("/bookTable",bookTable);
 
 export default router;
