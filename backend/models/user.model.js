@@ -1,5 +1,21 @@
 import mongoose from "mongoose";
 
+const orderSchema = new mongoose.Schema({
+    restaurantName: String,
+    createdAt: {
+      type: Date,
+      default: Date.now,
+    },
+    items: [
+      {
+        foodName: String,
+        quantity: Number,
+        amount: Number,
+      },
+    ],
+    amount: Number,
+  });
+
 const userSchema = new mongoose.Schema({
     username: {
         type: String,
@@ -40,7 +56,11 @@ const userSchema = new mongoose.Schema({
     profilePicture: {
         type: String,
         default: "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
-    }
+    },
+    orders: {
+        type: [orderSchema],
+        default: [],
+    },
 },{timestamps: true}
 );
 
