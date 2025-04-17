@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button, Modal } from "flowbite-react";
+import { useSelector } from "react-redux";
 
 export default function ReserveTable({ hotel }) {
   const [selectedTable, setSelectedTable] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [date, setDate] = useState("");
+  const [time, setTime] = useState("");
   const location = useLocation();
   const navigate = useNavigate();
-
-  const tab = new URLSearchParams(location.search).get("tab");
+  const { currentUser } = useSelector((state) => state.user);
 
   useEffect(() => {
     if (!hotel) {
@@ -21,10 +23,36 @@ export default function ReserveTable({ hotel }) {
     setShowModal(true);
   };
 
-  const confirmBooking = () => {
-    console.log("Confirm booking:", selectedTable);
-    // backend logic to reserve this table
-    setShowModal(false);
+  const confirmBooking = async () => {
+    if (!date || !time) return alert("Please select date and time");
+
+    try {
+      const res = await fetch("/api/order/bookTable", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          hotelName: hotel.hotelName,
+          floorId: selectedTable.floorId,
+          tableId: selectedTable.tableId,
+          date,
+          time,
+          phone: currentUser.phone,
+          username: currentUser.username,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        window.location.reload(); 
+      } else {
+        alert(data.message || "Booking failed");
+      }
+    } catch (err) {
+      console.error("Error booking table:", err);
+    } finally {
+      setShowModal(false);
+    }
   };
 
   if (!hotel) return null;
@@ -45,9 +73,7 @@ export default function ReserveTable({ hotel }) {
         </div>
       </div>
 
-      <h3 className="text-2xl font-semibold mb-6 text-purple-700">
-        Tables Available
-      </h3>
+      <h3 className="text-2xl font-semibold mb-6 text-purple-700">Tables Available</h3>
 
       {hotel.floors?.length > 0 ? (
         hotel.floors.map((floor, idx) => (
@@ -61,16 +87,20 @@ export default function ReserveTable({ hotel }) {
                     table.isBooked === "Yes" ? "bg-gray-200" : "bg-white"
                   }`}
                 >
-                  <p className="font-semibold text-md">
-                    Table ID: {table.tableId}
-                  </p>
+                  <p className="font-semibold text-md">Table ID: {table.tableId}</p>
                   <p className="text-sm">Type: {table.isPremium === "Yes" ? "Premium" : "Normal"}</p>
                   <p className="text-sm">Capacity: {table.capacity}</p>
                   <p className="text-sm">Charges: ₹{table.charges}</p>
+
                   {table.isBooked === "Yes" ? (
-                    <span className="inline-block mt-2 px-2 py-1 text-xs font-medium bg-red-500 text-white rounded">
-                      Booked
-                    </span>
+                    <div className="mt-2 text-sm text-gray-600">
+                      <p>📅 {table.date}</p>
+                      <p>⏰ {table.time}</p>
+                      <p>👤 {table.username}</p>
+                      <span className="inline-block mt-2 px-2 py-1 text-xs font-medium bg-red-500 text-white rounded">
+                        Booked
+                      </span>
+                    </div>
                   ) : (
                     <Button
                       size="xs"
@@ -96,6 +126,26 @@ export default function ReserveTable({ hotel }) {
             <h3 className="text-lg font-semibold mb-4">
               Are you sure you want to book this table?
             </h3>
+
+            <div className="mb-4">
+              <label className="block mb-1 text-sm font-medium">Select Date</label>
+              <input
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                className="w-full border px-3 py-2 rounded"
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block mb-1 text-sm font-medium">Select Time</label>
+              <input
+                type="time"
+                value={time}
+                onChange={(e) => setTime(e.target.value)}
+                className="w-full border px-3 py-2 rounded"
+              />
+            </div>
+
             {selectedTable && (
               <div className="text-sm text-gray-700 mb-4">
                 Table ID: <strong>{selectedTable.tableId}</strong> <br />
@@ -103,6 +153,7 @@ export default function ReserveTable({ hotel }) {
                 Charges: ₹{selectedTable.charges}
               </div>
             )}
+
             <div className="flex justify-center gap-4">
               <Button color="success" onClick={confirmBooking}>
                 Yes
