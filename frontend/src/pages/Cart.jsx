@@ -3,6 +3,7 @@ import CurrentOrder from "../components/CurrentOrder";
 import { useSelector } from "react-redux";
 import CustomerBill from "../components/CustomerBill";
 import ConfirmOrder from "../components/ConfirmOrder";
+import OrderHistory from "../components/OrderHistory";
 
 export default function Cart() {
   const { currentOrder } = useSelector((state) => state.order);
@@ -19,7 +20,8 @@ export default function Cart() {
       </div>
 
       <div className="w-full lg:w-[25%]">
-        <CustomerBill setTab={setTab}/>
+        <CustomerBill setTab={setTab} />
+        <OrderHistory />
       </div>
     </div>
   );

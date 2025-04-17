@@ -13,6 +13,7 @@ export default function ConfirmOrder({ setTab }) {
   const [showModal, setShowModal] = useState(false);
   const [estimatedTime, setEstimatedTime] = useState(null);
   const dispatch = useDispatch();
+  const { currentUser } = useSelector((state) => state.user);
 
   const hotelId = currentOrder?.hotelId;
 
@@ -59,14 +60,15 @@ export default function ConfirmOrder({ setTab }) {
             : []),
 
           ...(additionalItems || []).map((item) => ({
-            foodName: item.name,
+            foodName: item.food?.name || item.name,
             quantity: item.quantity || 1,
-            price: item.price,
+            price: item.food?.price || item.price || 0,
           })),
         ];
         
       const orderPayload = {
         adminEmail: currentOrder?.adminEmail,
+        userEmail: currentUser?.email,
         items: allItems,
       };
 

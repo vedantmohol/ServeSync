@@ -2,13 +2,28 @@ import React from 'react';
 import SimilarDishes from './SimilarDishes';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateCurrentOrderQuantity } from '../redux//order/orderSlice.js';
+import { useNavigate } from 'react-router-dom';
 
 export default function CurrentOrder(){
     const dispatch = useDispatch();
     const { currentOrder } = useSelector((state) => state.order);
+    const navigate = useNavigate();
 
-    if (!currentOrder) return <p>No food item selected.</p>;
-
+    if (!currentOrder) {
+      return (
+        <>
+        <div className="flex flex-col justify-center items-center h-40">
+        <p>No food item selected.</p>
+          <button
+            onClick={() => navigate("/restaurants")}
+            className="px-6 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition"
+          >
+            Grab Dishes
+          </button>
+        </div>
+        </>
+      );
+    }
     const { food, hotelName,quantity } = currentOrder;
 
     const handleQuantityChange = (type) => {
