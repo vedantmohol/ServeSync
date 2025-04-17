@@ -328,3 +328,27 @@ export const getHotelBills = async (req, res, next) => {
     return next(errorHandler(500, "Server error while fetching hotel bills"));
   }
 };
+
+export const getHotelTables = async (req, res, next) => {
+  try {
+    const { hotelId } = req.query;
+
+    if (!hotelId) return next(errorHandler(400, "Hotel ID is required"));
+
+    const hotel = await Hotel.findOne({ hotelId });
+
+    if (!hotel) return next(errorHandler(404, "Hotel not found"));
+
+    res.status(200).json({
+      success: true,
+      hotelName: hotel.hotelName,
+      hotelPhoto: hotel.hotelPhoto,
+      hotelAddress: hotel.hotelAddress,
+      hotelType: hotel.hotelType,
+      phone: hotel.phone,
+      floors: hotel.floors,
+    });
+  } catch (err) {
+    next(errorHandler(500, err.message || "Failed to fetch table structure"));
+  }
+};
