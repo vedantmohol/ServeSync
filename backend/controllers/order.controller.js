@@ -518,3 +518,24 @@ export const getWaiterOrders = async (req, res, next) => {
     next(errorHandler(500, err.message));
   }
 };
+
+export const updateOrderDelivery = async (req, res, next) => {
+  try {
+    const { hotelId, orderId } = req.body;
+    const hotel = await Hotel.findOne({ hotelId });
+    if (!hotel) return next(errorHandler(404, "Hotel not found"));
+
+    const order = hotel.orders.id(orderId);
+    if (!order) return next(errorHandler(404, "Order not found"));
+
+    const waiter = hotel.waiters.find((w) => w.staffID === order.waiterId);
+    if (waiter) waiter.isAvailable = "Yes";
+
+    order.status = "delivered";
+    await hotel.save();
+
+    res.status(200).json({ success: true, message: "Order marked as delivered" });
+  } catch (err) {
+    next(errorHandler(500, err.message || "Failed to update delivery"));
+  }
+};
