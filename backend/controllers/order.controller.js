@@ -476,3 +476,25 @@ export const getOrderHistory = async (req, res, next) => {
     next(errorHandler(500, err.message || "Failed to fetch order history"));
   }
 };
+
+export const assignWaiterToOrder = async (req, res, next) => {
+  try {
+    const { hotelId, orderId, waiterId } = req.body;
+    const hotel = await Hotel.findOne({ hotelId });
+    if (!hotel) return next(errorHandler(404, "Hotel not found"));
+
+    const order = hotel.orders.id(orderId);
+    if (!order) return next(errorHandler(404, "Order not found"));
+
+    const waiter = hotel.waiters.find((w) => w.staffID === waiterId);
+    if (!waiter) return next(errorHandler(404, "Waiter not found"));
+
+    waiter.isAvailable = "No";
+    order.waiterId = waiterId;
+    await hotel.save();
+
+    res.status(200).json({ success: true, message: "Waiter assigned successfully" });
+  } catch (err) {
+    next(errorHandler(500, err.message || "Failed to assign waiter"));
+  }
+};
