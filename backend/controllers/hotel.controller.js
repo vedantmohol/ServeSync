@@ -352,3 +352,15 @@ export const getHotelTables = async (req, res, next) => {
     next(errorHandler(500, err.message || "Failed to fetch table structure"));
   }
 };
+
+export const getAvailableWaiters = async (req, res, next) => {
+  try {
+    const hotel = await Hotel.findOne({ hotelId: req.query.hotelId });
+    if (!hotel) return next(errorHandler(404, "Hotel not found"));
+
+    const waiters = hotel.waiters.filter((w) => w.isAvailable === "Yes");
+    res.status(200).json({ success: true, waiters });
+  } catch (err) {
+    next(errorHandler(500, err.message || "Failed to fetch waiters"));
+  }
+};

@@ -60,6 +60,7 @@ const orderSchema = new mongoose.Schema(
     staffId: { type: String, required: true },
     floorId: { type: String, default: null },
     tableId: { type: String, default: null },
+    waiterId: { type: String, default: null },
     kitchenId: { type: String, required: true },
     items: [
       {
@@ -68,6 +69,7 @@ const orderSchema = new mongoose.Schema(
         amount: { type: Number },
       },
     ],
+    status: { type: String, enum: ["pending", "delivered"], default: "pending" },
     totalAmount: { type: Number, required: true },
   },
 );
@@ -172,6 +174,11 @@ const hotelSchema = new mongoose.Schema({
       email: String,
       phone: String,
       staffID: String,
+      isAvailable: {
+        type: String,
+        enum: ["Yes", "No"],
+        default: "Yes",
+      },
       createdAt: {
         type: Date,
         default: Date.now,
