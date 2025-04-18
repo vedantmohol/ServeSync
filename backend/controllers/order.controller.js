@@ -498,3 +498,23 @@ export const assignWaiterToOrder = async (req, res, next) => {
     next(errorHandler(500, err.message || "Failed to assign waiter"));
   }
 };
+
+export const getWaiterOrders = async (req, res, next) => {
+  try {
+    const { hotelId, staffId } = req.query;
+    if (!hotelId || !staffId) {
+      return next(errorHandler(400, "Missing hotelId or staffId"));
+    }
+
+    const hotel = await Hotel.findOne({ hotelId });
+    if (!hotel) return next(errorHandler(404, "Hotel not found"));
+
+    const orders = hotel.orders.filter(
+      (order) => order.waiterId === staffId && order.status === "pending"
+    );
+
+    res.status(200).json({ orders });
+  } catch (err) {
+    next(errorHandler(500, err.message));
+  }
+};

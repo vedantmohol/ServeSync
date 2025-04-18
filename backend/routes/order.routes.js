@@ -1,5 +1,5 @@
 import express from "express";
-import { assignWaiterToOrder, bookTable, generateBill, getChefOrders, getManagerOrders, getOrderHistory, getOrderStructure, markOrderCompleted, placeOnlineOrder, placeOrder, unbookTable, updateOrder } from "../controllers/order.controller.js";
+import { assignWaiterToOrder, bookTable, generateBill, getChefOrders, getManagerOrders, getOrderHistory, getOrderStructure, getWaiterOrders, markOrderCompleted, placeOnlineOrder, placeOrder, unbookTable, updateOrder } from "../controllers/order.controller.js";
 
 const router = express.Router();
 
@@ -15,5 +15,6 @@ router.put("/bookTable",bookTable);
 router.put("/unbookTable", unbookTable);
 router.get("/orderhistory", getOrderHistory);
 router.patch("/assign-waiter", assignWaiterToOrder);
+router.get("/get-waiter-orders", getWaiterOrders);
 
 export default router;
