@@ -19,6 +19,8 @@ import ReserveTableList from "./pages/ReserveTableList";
 import FooterCom from "./components/Footer";
 import ViewBills from "./pages/ViewBills";
 import ManageTables from "./pages/ManageTables";
+import WaiterPrivateRoute from "./components/WaiterPrivateRoute";
+import WaiterDashboard from "./pages/WaiterDashboard";
 
 function App() {
   return (
@@ -43,6 +45,9 @@ function App() {
         </Route>
         <Route element={<ChefPrivateRoute />}>
           <Route path="/chef-dashboard" element={<ChefDashBoard/>} />
+        </Route>
+        <Route element={<WaiterPrivateRoute />}>
+          <Route path="/waiter-dashboard" element={<WaiterDashboard/>} />
         </Route>
         <Route element={<CustomerPrivateRoute />}>
           <Route path="/cart" element={<Cart/>} />
