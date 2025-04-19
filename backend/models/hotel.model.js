@@ -91,6 +91,37 @@ const billSchema = new mongoose.Schema(
   { _id: false }
 );
 
+const commentSchema = new mongoose.Schema(
+  {
+    stars: {
+      type: Number,
+      required: true,
+      min: 1,
+      max: 5,
+    },
+    content: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
+    likes: {
+      type: [mongoose.Schema.Types.ObjectId],
+      default: [],
+      ref: 'User',
+    },
+    numberOfLikes: {
+      type: Number,
+      default: 0,
+    },
+  },
+  { timestamps: true }
+);
+
 const hotelSchema = new mongoose.Schema({
   adminName: {
     type: String,
@@ -212,6 +243,14 @@ const hotelSchema = new mongoose.Schema({
       return `${yyyy}${mm}${dd}${shortId}`;
     },
   },
+  totalRatingStars: {
+    type: Number,
+    default: 0,
+  },
+  comments: {
+    type: [commentSchema],
+    default: [],
+  }
 });
 
 const Hotel = mongoose.model("Hotel",hotelSchema);
