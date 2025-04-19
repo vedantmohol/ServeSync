@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button, Modal } from "flowbite-react";
 import { useSelector } from "react-redux";
+import CommentSection from "./CommentSection";
 
 export default function ReserveTable({ hotel }) {
   const [selectedTable, setSelectedTable] = useState(null);
@@ -119,6 +120,8 @@ export default function ReserveTable({ hotel }) {
       ) : (
         <p className="text-gray-500">No floor/table data available.</p>
       )}
+
+      <CommentSection hotelId={hotel.hotelId} />
 
       <Modal show={showModal} onClose={() => setShowModal(false)} size="md">
         <Modal.Body>

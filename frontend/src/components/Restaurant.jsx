@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import FoodCard from "./FoodCard";
+import CommentSection from "./CommentSection";
 
 export default function Restaurant({ hotel }) {
   const [foods, setFoods] = useState([]);
@@ -47,6 +48,8 @@ export default function Restaurant({ hotel }) {
           No food items found for this restaurant.
         </p>
       )}
+
+      <CommentSection hotelId={hotel.hotelId} />
     </div>
   );
 }
