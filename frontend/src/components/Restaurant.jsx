@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import FoodCard from "./FoodCard";
 import CommentSection from "./CommentSection";
+import Comment from "./Comment";
 
 export default function Restaurant({ hotel }) {
   const [foods, setFoods] = useState([]);
@@ -50,6 +51,7 @@ export default function Restaurant({ hotel }) {
       )}
 
       <CommentSection hotelId={hotel.hotelId} />
+      <Comment hotelId={hotel.hotelId} />
     </div>
   );
 }

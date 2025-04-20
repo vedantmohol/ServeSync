@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { Modal, Button } from 'flowbite-react';
+import { FaRegStar, FaStar, FaStarHalfAlt } from 'react-icons/fa';
 
 export default function HotelCard({ hotel, mode = 'restaurant' }) {
-  const { hotelPhoto, hotelName, hotelType, phone } = hotel;
+  const { hotelPhoto, hotelName, hotelType, phone,totalRatingStars = 0, comments = [], } = hotel;
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
   const { currentUser } = useSelector((state) => state.user);
@@ -22,10 +23,36 @@ export default function HotelCard({ hotel, mode = 'restaurant' }) {
   };
 }
 
+  const avgRating = comments.length > 0 ? totalRatingStars / comments.length : 0;
+  const rounded = avgRating.toFixed(1);
+
+  const renderStars = (rating) => {
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating - fullStars >= 0.5;
+    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+
+    return (
+      <div className="flex items-center gap-1 mt-1">
+        {[...Array(fullStars)].map((_, i) => (
+          <FaStar key={`full-${i}`} className="text-yellow-400" />
+        ))}
+        {hasHalfStar && <FaStarHalfAlt className="text-yellow-400" />}
+        {[...Array(emptyStars)].map((_, i) => (
+          <FaRegStar key={`empty-${i}`} className="text-gray-300" />
+        ))}
+        {comments.length > 0 && (
+          <span className="text-xs text-gray-600 ml-1">
+            {rounded}/5 ({comments.length})
+            </span>
+        )}
+      </div>
+    );
+  };
+
 const buttonText = mode === 'reserve' ? 'Book Table' : 'View Restaurant';
   return (
     <>
-    <div className='group relative w-full border border-purple-500 hover:border-2 h-[370px] overflow-hidden rounded-lg sm:w-[300px] md:w-[320px] transition-all mx-auto'>
+    <div className='group relative w-full border border-purple-500 hover:border-2 h-[400px] overflow-hidden rounded-lg sm:w-[300px] md:w-[320px] transition-all mx-auto'>
         <img
           src={hotelPhoto}
           alt='Hotel'
@@ -34,6 +61,7 @@ const buttonText = mode === 'reserve' ? 'Book Table' : 'View Restaurant';
         <div className='p-3 flex flex-col gap-2'>
           <p className='text-lg font-semibold line-clamp-1'>{hotelName}</p>
           <p className='text-sm text-gray-600 capitalize'>{hotelType}</p>
+          {renderStars(avgRating)}
           <p className='font-medium text-sm text-gray-800 mt-auto'>📞 {phone}</p>
           <button
             onClick={handleDetailHotelPage}
