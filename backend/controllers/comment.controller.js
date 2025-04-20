@@ -1,5 +1,6 @@
 import { errorHandler } from "../utils/error.js";
 import Hotel from '../models/hotel.model.js';
+import User from "../models/user.model.js";
 
 export const createHotelComment = async (req, res, next) => {
   try {
@@ -32,5 +33,26 @@ export const createHotelComment = async (req, res, next) => {
     res.status(201).json({ message: "Comment and rating added successfully", comment: newComment });
   } catch (error) {
     next(errorHandler(500, error.message || "Failed to add comment"));
+  }
+};
+
+export const getCommentsByHotelId = async (req, res, next) => {
+  try {
+    const hotel = await Hotel.findOne({ hotelId: req.params.hotelId });
+    if (!hotel) return res.status(404).json({ message: "Hotel not found" });
+
+    const populatedComments = await Promise.all(
+      hotel.comments.map(async (comment) => {
+        const user = await User.findById(comment.userId).select("username");
+        return {
+          ...comment.toObject(),
+          username: user ? user.username : "Unknown",
+        };
+      })
+    );
+
+    res.status(200).json(populatedComments);
+  } catch (error) {
+    next(error);
   }
 };
