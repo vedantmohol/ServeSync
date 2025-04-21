@@ -56,3 +56,36 @@ export const getCommentsByHotelId = async (req, res, next) => {
     next(error);
   }
 };
+
+export const editComment = async (req, res, next) => {
+  try {
+    const { content, stars } = req.body;
+    const { commentId } = req.params;
+    const userId = req.user.id;
+
+    const hotel = await Hotel.findOne({ 'comments._id': commentId });
+    if (!hotel) return res.status(404).json({ message: 'Hotel not found' });
+
+    const comment = hotel.comments.id(commentId);
+    if (!comment) return res.status(404).json({ message: 'Comment not found' });
+
+    if (comment.userId.toString() !== userId) {
+      return res.status(403).json({ message: 'Unauthorized' });
+    }
+
+    const oldStars = comment.stars;
+    if (typeof stars === 'number' && stars >= 1 && stars <= 5) {
+      hotel.totalRatingStars = hotel.totalRatingStars - oldStars + stars;
+      comment.stars = stars;
+    }
+
+    if (content) {
+      comment.content = content;
+    }
+
+    await hotel.save();
+    res.status(200).json({ message: 'Comment updated successfully', comment });
+  } catch (error) {
+    next(error);
+  }
+};
