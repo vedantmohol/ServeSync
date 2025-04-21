@@ -89,3 +89,32 @@ export const editComment = async (req, res, next) => {
     next(error);
   }
 };
+
+export const deleteComment = async (req, res, next) => {
+  try {
+    const { commentId } = req.params;
+    const userPhone = req.user.phone;
+
+    const user = await User.findOne({ phone: userPhone });
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+
+    const hotel = await Hotel.findOne({ 'comments._id': commentId });
+    if (!hotel) return res.status(404).json({ message: 'Hotel not found' });
+
+    const comment = hotel.comments.id(commentId);
+    if (!comment) return res.status(404).json({ message: 'Comment not found' });
+
+    if (comment.userId.toString() !== user._id.toString()) {
+      return res.status(403).json({ message: 'Unauthorized' });
+    }
+
+    hotel.totalRatingStars -= comment.stars;
+    hotel.comments.pull({ _id: commentId });
+
+    await hotel.save();
+    res.status(200).json({ message: 'Comment deleted successfully' });
+  } catch (error) {
+    next(error);
+  }
+};
