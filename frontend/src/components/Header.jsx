@@ -3,7 +3,7 @@ import { AiOutlineSearch } from "react-icons/ai";
 import { FaLeaf, FaDrumstickBite } from "react-icons/fa";
 import React, { useState } from "react";
 import { Avatar, Button, Dropdown, Navbar, TextInput } from "flowbite-react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import ServeSyncLogo from "../assets/ServeSyncLogo.png";
 import { useSelector } from "react-redux";
 import { signoutSuccess } from "../redux/user/userSlice.js";
@@ -13,6 +13,7 @@ function Header() {
   const dispatch = useDispatch();
   const { currentUser } = useSelector((state) => state.user);
   const path = useLocation().pathname;
+  const navigate = useNavigate();
 
   const handleSignOut = async () => {
     try {
@@ -50,7 +51,7 @@ function Header() {
         navigate("/hall-manager-dashboard");
         break;
       case "hotel_admin":
-        navigate("/admin-dashboard");
+        navigate("/admin-home");
         break;
       default:
         navigate("/");
@@ -58,13 +59,13 @@ function Header() {
   };
   return (
     <Navbar className="bg-purple-800 text-white border-b-2 flex flex-wrap justify-between items-center p-4">
-      <Link onClick={handleLogoClick} className="flex items-center">
+      <button onClick={handleLogoClick} className="flex items-center">
         <img
           src={ServeSyncLogo}
           alt="ServeSync Logo"
           className="w-auto h-12 rounded-xl"
         />
-      </Link>
+      </button>
 
       <form className="hidden lg:flex flex-1 justify-center px-4">
         <TextInput
@@ -179,8 +180,8 @@ function Header() {
                 </span>
               </Link>
             </Navbar.Link>
-            <Navbar.Link as="div" active={path === "/updatefood"}>
-              <Link to="/updatefood">
+            <Navbar.Link as="div" active={path === "/viewdishes"}>
+              <Link to="/viewdishes">
                 <span className="px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg hover:opacity-90 text-white">
                   View Dishes
                 </span>

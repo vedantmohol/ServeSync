@@ -21,6 +21,7 @@ import ViewBills from "./pages/ViewBills";
 import ManageTables from "./pages/ManageTables";
 import WaiterPrivateRoute from "./components/WaiterPrivateRoute";
 import WaiterDashboard from "./pages/WaiterDashboard";
+import ViewDishes from "./pages/ViewDishes";
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
         <Route element={<AdminPrivateRoute />}>
           <Route path="/admin-home" element={<AdminHomePage/>} />
           <Route path="/viewbills" element={<ViewBills/>} />
+          <Route path="/viewdishes" element={<ViewDishes/>} />
         </Route>
         <Route element={<HallManagerPrivateRoute />}>
           <Route path="/hall-manager-dashboard" element={<HallManagerDashBoard/>} />
