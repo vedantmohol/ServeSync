@@ -22,10 +22,12 @@ import ManageTables from "./pages/ManageTables";
 import WaiterPrivateRoute from "./components/WaiterPrivateRoute";
 import WaiterDashboard from "./pages/WaiterDashboard";
 import ViewDishes from "./pages/ViewDishes";
+import ScrollToTop from "./components/ScrollToTop";
 
 function App() {
   return (
     <BrowserRouter>
+    <ScrollToTop/>
       <Header />
       <Routes>
         <Route path="/" element={<Home />} />
