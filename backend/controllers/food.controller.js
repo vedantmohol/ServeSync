@@ -129,3 +129,24 @@ export const getFoods = async (req, res, next) => {
     next(errorHandler(500, 'Failed to fetch foods'));
   }
 }
+
+export const deleteFood = async (req, res, next) => {
+  try {
+    const { foodId } = req.params;
+
+    const foodDoc = await Food.findOne({ 'food._id': foodId });
+
+    if (!foodDoc) {
+      return next(errorHandler(404, 'Food item not found'));
+    }
+
+    foodDoc.food = foodDoc.food.filter(item => item._id.toString() !== foodId);
+
+    await foodDoc.save();
+
+    res.status(200).json({ message: 'Food item deleted successfully' });
+  } catch (error) {
+    console.error('Delete food error:', error);
+    next(errorHandler(500, 'Failed to delete food item'));
+  }
+};
