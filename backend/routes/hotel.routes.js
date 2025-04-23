@@ -1,5 +1,5 @@
 import express from "express";
-import { addHotelStructure, addStaff, getAvailableWaiters, getHotelBills, getHotels, getHotelTables, registerHotel } from "../controllers/hotel.controller.js";
+import { addHotelStructure, addStaff, getAvailableWaiters, getHotelBills, getHotels, getHotelStaff, getHotelTables, registerHotel } from "../controllers/hotel.controller.js";
 import { verifyToken } from "../utils/verifyUser.js";
 
 const router =  express.Router();
@@ -11,5 +11,6 @@ router.post("/addStructure",addHotelStructure);
 router.get("/getBills", getHotelBills);
 router.get("/getHotelTables",getHotelTables);
 router.get("/available-waiters",getAvailableWaiters);
+router.get("/getStaff", getHotelStaff);
 
 export default router;

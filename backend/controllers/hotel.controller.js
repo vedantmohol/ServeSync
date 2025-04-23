@@ -364,3 +364,31 @@ export const getAvailableWaiters = async (req, res, next) => {
     next(errorHandler(500, err.message || "Failed to fetch waiters"));
   }
 };
+
+export const getHotelStaff = async (req, res, next) => {
+  try {
+    const { hotelId } = req.query;
+
+    if (!hotelId) {
+      return res.status(400).json({ success: false, message: "Hotel ID required" });
+    }
+
+    const hotel = await Hotel.findOne({ hotelId });
+
+    if (!hotel) {
+      return res.status(404).json({ success: false, message: "Hotel not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      numberOfChefs: hotel.numberOfChefs || hotel.chefs.length,
+      numberOfWaiters: hotel.numberOfWaiters || hotel.waiters.length,
+      numberOfHallManagers: hotel.numberOfHallManagers || hotel.hallManagers.length,
+      chefs: hotel.chefs || [],
+      waiters: hotel.waiters || [],
+      hallManagers: hotel.hallManagers || [],
+    });
+  } catch (error) {
+    next(error);
+  }
+};
