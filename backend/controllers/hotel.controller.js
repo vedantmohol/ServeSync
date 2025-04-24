@@ -392,3 +392,43 @@ export const getHotelStaff = async (req, res, next) => {
     next(error);
   }
 };
+
+export const deleteStaff = async (req, res, next) => {
+  try {
+    const { phone, role, hotelId } = req.body;
+
+    if (!phone || !role || !hotelId) {
+      return res.status(400).json({ message: "Missing phone, role or hotelId" });
+    }
+
+    const hotel = await Hotel.findOne({ hotelId });
+    if (!hotel) return res.status(404).json({ message: "Hotel not found" });
+
+    if (role === "chef") {
+      hotel.chefs = hotel.chefs.filter(staff => staff.phone !== phone);
+      hotel.numberOfChefs = hotel.chefs.length;
+    } else if (role === "waiter") {
+      hotel.waiters = hotel.waiters.filter(staff => staff.phone !== phone);
+      hotel.numberOfWaiters = hotel.waiters.length;
+    } else if (role === "hall_manager") {
+      hotel.hallManagers = hotel.hallManagers.filter(staff => staff.phone !== phone);
+      hotel.numberOfHallManagers = hotel.hallManagers.length;
+    } else {
+      return res.status(400).json({ message: "Invalid role" });
+    }    
+
+    await hotel.save();
+
+    const user = await User.findOne({ phone });
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    user.role = "customer";
+    user.staffId = null;
+    user.hotelId = null;
+    await user.save();
+
+    return res.status(200).json({ success: true, message: `${role} removed successfully` });
+  } catch (error) {
+    return next(errorHandler(500, error.message || "Failed to remove staff"));
+  }
+};
