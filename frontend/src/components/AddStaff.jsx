@@ -62,7 +62,7 @@ export default function AddStaff() {
 
   const handleClose = () => {
     setShowModal(false);
-    navigate("/admin-dashboard");
+    navigate("/admin-home");
   };
 
   return (
