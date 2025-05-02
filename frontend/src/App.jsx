@@ -23,6 +23,7 @@ import WaiterPrivateRoute from "./components/WaiterPrivateRoute";
 import WaiterDashboard from "./pages/WaiterDashboard";
 import ViewDishes from "./pages/ViewDishes";
 import ScrollToTop from "./components/ScrollToTop";
+import Search from "./pages/Search";
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/sign-in" element={<SignIn />} />
         <Route path="/sign-up" element={<SignUp />} />
+        <Route path="/search" element={<Search/>}/>
         <Route path="/restaurants" element={<RestaurantList />} />
         <Route path="/reservetable" element={<ReserveTableList/>}/>
         <Route element={<PrivateRoute />}>

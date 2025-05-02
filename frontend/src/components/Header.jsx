@@ -1,6 +1,5 @@
 import { useDispatch } from "react-redux";
 import { AiOutlineSearch } from "react-icons/ai";
-import { FaLeaf, FaDrumstickBite } from "react-icons/fa";
 import React, { useState } from "react";
 import { Avatar, Button, Dropdown, Navbar, TextInput } from "flowbite-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -9,7 +8,7 @@ import { useSelector } from "react-redux";
 import { signoutSuccess } from "../redux/user/userSlice.js";
 
 function Header() {
-  const [vegMode, setVegMode] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
   const dispatch = useDispatch();
   const { currentUser } = useSelector((state) => state.user);
   const path = useLocation().pathname;
@@ -57,6 +56,15 @@ function Header() {
         navigate("/");
     }
   };
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    const urlParams = new URLSearchParams(location.search);
+    urlParams.set("searchTerm", searchTerm);
+    const searchQuery = urlParams.toString();
+    navigate(`/search?${searchQuery}`);
+  };
+
   return (
     <Navbar className="bg-purple-800 text-white border-b-2 flex flex-wrap justify-between items-center p-4">
       <button onClick={handleLogoClick} className="flex items-center">
@@ -67,33 +75,21 @@ function Header() {
         />
       </button>
 
-      <form className="hidden lg:flex flex-1 justify-center px-4">
+      <form onSubmit={handleSearchSubmit} className="hidden lg:flex flex-1 justify-center px-4">
         <TextInput
           type="text"
           placeholder="Search..."
           rightIcon={AiOutlineSearch}
+          value={searchTerm}
           className="w-full max-w-md"
+          onChange={(e) => setSearchTerm(e.target.value)}
         />
       </form>
-      <Button className="w-12 h-10 lg:hidden" color="gray" pill>
+      <Button onClick={handleSearchSubmit} className="w-12 h-10 lg:hidden" color="gray" pill>
         <AiOutlineSearch className="text-xl" />
       </Button>
 
-      <div className="flex items-center gap-2 md:order-2">
-        {currentUser && currentUser.role === "customer" && (
-          <Button
-            gradientDuoTone="purpleToBlue"
-            className="px-3 py-2"
-            onClick={() => setVegMode(!vegMode)}
-          >
-            {vegMode ? (
-              <FaLeaf className="text-green-500" />
-            ) : (
-              <FaDrumstickBite className="text-red-500" />
-            )}
-          </Button>
-        )}
-
+      <div className="flex items-center gap-2 ml-3 md:order-2">
         {currentUser ? (
           <Dropdown
             arrowIcon={false}

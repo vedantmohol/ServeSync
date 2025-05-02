@@ -33,7 +33,7 @@ function SearchFood() {
     const fetchFoods = async () => {
       setLoading(true);
       const queryString = new URLSearchParams(newSidebarData).toString();
-      const res = await fetch(`/api/food/getfoods?${queryString}`);
+      const res = await fetch(`/api/food/get?${queryString}`);
       const data = await res.json();
       setLoading(false);
 
