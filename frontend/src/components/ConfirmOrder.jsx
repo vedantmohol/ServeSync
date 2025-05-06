@@ -25,6 +25,16 @@ export default function ConfirmOrder({ setTab }) {
     }
   }, [navigate, location.search]);
 
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.async = true;
+    document.body.appendChild(script);
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
+  
   const combinedItems = [
     ...(currentOrder ? [{ ...currentOrder, quantity: currentOrder.quantity || 1 }] : []),
     ...(additionalItems || []),
@@ -47,52 +57,113 @@ export default function ConfirmOrder({ setTab }) {
   };
 
   const handlePlaceOrder = async () => {
-    try {
-        const allItems = [
-          ...(currentOrder
-            ? [
-                {
-                  foodName: currentOrder.food.name,
-                  quantity: currentOrder.quantity || 1,
-                  price: currentOrder.food.price,
-                },
-              ]
-            : []),
-
-          ...(additionalItems || []).map((item) => ({
-            foodName: item.food?.name || item.name,
-            quantity: item.quantity || 1,
-            price: item.food?.price || item.price || 0,
-          })),
-        ];
-        
-      const orderPayload = {
-        adminEmail: currentOrder?.adminEmail,
-        userEmail: currentUser?.email,
-        items: allItems,
-      };
-
-      const res = await fetch("/api/order/place-online", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(orderPayload),
-      });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        setEstimatedTime(data.estimatedTime);
-        setShowModal(true);
-        setTimeout(() => {
-          setShowModal(false);
-          dispatch(clearCurrentOrder());
-          navigate("/");
-        }, 3000);
-      } else {
-        setSuccessMsg(data.message || "Failed to place order");
+    const allItems = [
+      ...(currentOrder
+        ? [
+            {
+              foodName: currentOrder.food.name,
+              quantity: currentOrder.quantity || 1,
+              price: currentOrder.food.price,
+            },
+          ]
+        : []),
+  
+      ...(additionalItems || []).map((item) => ({
+        foodName: item.food?.name || item.name,
+        quantity: item.quantity || 1,
+        price: item.food?.price || item.price || 0,
+      })),
+    ];
+  
+    const orderPayload = {
+      adminEmail: currentOrder?.adminEmail,
+      userEmail: currentUser?.email,
+      items: allItems,
+      paymentMethod: selectedPayment,
+    };
+  
+    if (selectedPayment === "UPI") {
+      try {
+        const razorRes = await fetch("/api/order/create-order", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ amount: grandTotal }),
+        });
+    
+        const razorData = await razorRes.json();
+    
+        const options = {
+          key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+          amount: razorData.amount,
+          currency: razorData.currency,
+          name: "ServeSync",
+          description: "Online Food Order",
+          order_id: razorData.id,
+          handler: async function (response) {
+            try {
+              const res = await fetch("/api/order/place-online", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(orderPayload),
+              });
+    
+              const data = await res.json();
+              if (res.ok) {
+                setEstimatedTime(data.estimatedTime);
+                setShowModal(true);
+                setTimeout(() => {
+                  setShowModal(false);
+                  dispatch(clearCurrentOrder());
+                  navigate("/");
+                }, 3000);
+              } else {
+                setSuccessMsg(data.message || "Failed to place order");
+              }
+            } catch (err) {
+              setSuccessMsg("Something went wrong while placing order");
+            }
+          },
+          prefill: {
+            name: currentUser?.username,
+            email: currentUser?.email,
+          },
+          theme: {
+            color: "#F37254",
+          },
+        };
+    
+        const rzp = new window.Razorpay(options);
+        rzp.open();
+      } catch (error) {
+        setSuccessMsg("Failed to initiate Razorpay payment");
       }
-    } catch (err) {
-      setSuccessMsg("Something went wrong while placing order");
+    }
+     else if (selectedPayment === "Cash on Delivery") {
+      try {
+        const res = await fetch("/api/order/place-online", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(orderPayload),
+        });
+  
+        const data = await res.json();
+  
+        if (res.ok) {
+          setEstimatedTime(data.estimatedTime);
+          setShowModal(true);
+          setTimeout(() => {
+            setShowModal(false);
+            dispatch(clearCurrentOrder());
+            navigate("/");
+          }, 3000);
+        } else {
+          setSuccessMsg(data.message || "Failed to place order");
+        }
+      } catch (err) {
+        setSuccessMsg("Something went wrong while placing order");
+      }
+    } else {
+      setSuccessMsg("Please select a payment method.");
     }
   };
 
@@ -140,12 +211,11 @@ export default function ConfirmOrder({ setTab }) {
           </div>
         </div>
 
-        {/* Payment Method */}
         <div className="border p-4 rounded-lg shadow-md">
           <h3 className="text-xl font-semibold mb-4">Select Payment Method</h3>
 
           <div className="space-y-5">
-            {["Cash on Delivery", "Card", "UPI"].map((method) => (
+            {["Cash on Delivery", "UPI"].map((method) => (
               <div key={method} className="flex items-center gap-3 text-lg">
                 <Radio
                   name="payment"
@@ -161,7 +231,7 @@ export default function ConfirmOrder({ setTab }) {
           <div className="flex justify-between gap-4 mt-8">
             <Button
               color="success"
-              disabled={selectedPayment !== "Cash on Delivery"}
+              disabled={!selectedPayment}
               onClick={handlePlaceOrder}
               className="w-full"
             >
