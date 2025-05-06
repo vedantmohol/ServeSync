@@ -250,7 +250,7 @@ export const generateBill = async (req, res, next) => {
     if (totalStaff > 10) gstRate = 12.0;
     else if (totalStaff > 5) gstRate = 5.0;
 
-    const gstAmount = (gstRate / 100) * subTotal;
+    const gstAmount = Math.round((gstRate / 100) * subTotal);
     const grandTotal = Math.round(subTotal + 2 * gstAmount);
 
     const lastBill = hotel.bills?.at(-1)?.billNo;
@@ -262,8 +262,8 @@ export const generateBill = async (req, res, next) => {
       billNo,
       createdAt: new Date(),
       subTotal,
-      gst: gstRate,
-      sgst: gstRate,
+      gst: gstAmount,
+      sgst: gstAmount,
       grandTotal,
       paymentMode,
     };
@@ -303,8 +303,8 @@ export const generateBill = async (req, res, next) => {
       message: "Bill generated successfully",
       billNo,
       subTotal,
-      gst: gstRate,
-      sgst: gstRate,
+      gst: gstAmount,
+      sgst: gstAmount,
       grandTotal,
     });
   } catch (error) {

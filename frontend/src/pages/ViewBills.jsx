@@ -90,8 +90,8 @@ export default function ViewBills() {
                       <Table.Cell>{bill.billNo}</Table.Cell>
                       <Table.Cell>{formatDate(bill.createdAt)}</Table.Cell>
                       <Table.Cell>₹{bill.subTotal}</Table.Cell>
-                      <Table.Cell>{bill.gst}%</Table.Cell>
-                      <Table.Cell>{bill.sgst}%</Table.Cell>
+                      <Table.Cell>₹{bill.gst}</Table.Cell>
+                      <Table.Cell>₹{bill.sgst}</Table.Cell>
                       <Table.Cell>₹{bill.grandTotal}</Table.Cell>
                       <Table.Cell>{bill.paymentMode}</Table.Cell>
                     </Table.Row>
