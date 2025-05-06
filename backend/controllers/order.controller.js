@@ -1,6 +1,14 @@
 import Hotel from "../models/hotel.model.js";
 import User from "../models/user.model.js";
 import { errorHandler } from "../utils/error.js";
+import Razorpay from "razorpay";
+import dotenv from "dotenv";
+dotenv.config();
+
+const razorpayInstance = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_KEY_SECRET,
+});
 
 export const getOrderStructure = async (req, res, next) =>{
     try{
@@ -304,9 +312,26 @@ export const generateBill = async (req, res, next) => {
   }
 };
 
+export const createRazorpayOrder = async (req, res, next) => {
+  const { amount } = req.body; 
+
+  try {
+    const options = {
+      amount: amount * 100,
+      currency: "INR",
+      receipt: `rcpt_${Date.now()}`,
+    };
+
+    const order = await razorpayInstance.orders.create(options);
+    res.status(200).json(order);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const placeOnlineOrder = async (req, res, next) => {
   try {
-    const { adminEmail, items, userEmail } = req.body;
+    const { adminEmail, items, userEmail, paymentMethod } = req.body;
 
     if (!adminEmail || !Array.isArray(items) || items.length === 0 || !userEmail) {
       return next(errorHandler(400, "Admin email, food items, and user email are required."));
@@ -344,6 +369,32 @@ export const placeOnlineOrder = async (req, res, next) => {
     const grandTotal = Math.round(totalAmount + 2 * gstAmount);
 
     const now = new Date();
+    const estimatedTime = items.length > 3 ? 45 : 30;
+
+    if (paymentMethod === "UPI") {
+      const Razorpay = require("razorpay");
+
+      const razorpayInstance = new Razorpay({
+        key_id: process.env.RAZORPAY_KEY_ID,
+        key_secret: process.env.RAZORPAY_KEY_SECRET,
+      });
+
+      const options = {
+        amount: grandTotal * 100,
+        currency: "INR",
+        receipt: `receipt_order_${Date.now()}`,
+      };
+
+      const razorpayOrder = await razorpayInstance.orders.create(options);
+
+      return res.status(200).json({
+        success: true,
+        razorpayOrderId: razorpayOrder.id,
+        amount: razorpayOrder.amount,
+        currency: razorpayOrder.currency,
+        estimatedTime,
+      });
+    }
 
     const hotelOrder = {
       staffId,
@@ -368,8 +419,6 @@ export const placeOnlineOrder = async (req, res, next) => {
 
     customer.orders.push(userOrder);
     await customer.save();
-
-    const estimatedTime = items.length > 3 ? 45 : 30;
 
     res.status(200).json({
       success: true,
