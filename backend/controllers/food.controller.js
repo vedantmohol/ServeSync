@@ -150,3 +150,61 @@ export const deleteFood = async (req, res, next) => {
     next(errorHandler(500, 'Failed to delete food item'));
   }
 };
+
+export const getFoodById = async (req, res, next) => {
+  try {
+    const { hotelId, foodId } = req.params;
+
+    const hotel = await Food.findOne({ hotelId });
+
+    if (!hotel) {
+      return res.status(404).json({ message: "Hotel not found" });
+    }
+
+    const dish = hotel.food.find(f => f._id.toString() === foodId);
+
+    if (!dish) {
+      return res.status(404).json({ message: "Dish not found in the hotel" });
+    }
+
+    res.status(200).json({ success: true, dish });
+  } catch (err) {
+    console.error(err);
+    next(errorHandler(500, "Error fetching food"));
+  }
+};
+
+export const updateFoodById = async (req, res, next) => {
+  try {
+    const { hotelId, foodId } = req.params;
+    const { name, type, category, dishType, price, description, image } = req.body;
+
+    const hotel = await Food.findOne({ hotelId });
+    if (!hotel) return next(errorHandler(404, "Hotel not found"));
+
+    const index = hotel.food.findIndex((item) => item._id.toString() === foodId);
+    if (index === -1) return next(errorHandler(404, "Food item not found"));
+
+    const originalCreatedAt = hotel.food[index].createdAt;
+
+    hotel.food[index] = {
+      ...hotel.food[index]._doc,
+      name,
+      type,
+      category,
+      dishType,
+      price,
+      description,
+      image,
+      createdAt: originalCreatedAt, 
+      updatedAt: new Date(),
+    };
+
+    await hotel.save();
+
+    res.status(200).json({ success: true, message: "Food item updated successfully" });
+  } catch (err) {
+    console.error(err);
+    next(errorHandler(500, "Failed to update food item"));
+  }
+};

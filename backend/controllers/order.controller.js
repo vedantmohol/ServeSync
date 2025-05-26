@@ -372,7 +372,7 @@ export const placeOnlineOrder = async (req, res, next) => {
     const estimatedTime = items.length > 3 ? 45 : 30;
 
     if (paymentMethod === "UPI") {
-      const Razorpay = require("razorpay");
+      const { default: Razorpay } = await import("razorpay");
 
       const razorpayInstance = new Razorpay({
         key_id: process.env.RAZORPAY_KEY_ID,
