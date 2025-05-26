@@ -400,9 +400,12 @@ export const deleteStaff = async (req, res, next) => {
     if (!phone || !role || !hotelId) {
       return res.status(400).json({ message: "Missing phone, role or hotelId" });
     }
-
+    
     const hotel = await Hotel.findOne({ hotelId });
     if (!hotel) return res.status(404).json({ message: "Hotel not found" });
+    
+    const user = await User.findOne({ phone });
+    if (!user) return res.status(404).json({ message: "User not found" });
 
     if (role === "chef") {
       hotel.chefs = hotel.chefs.filter(staff => staff.phone !== phone);
@@ -419,8 +422,6 @@ export const deleteStaff = async (req, res, next) => {
 
     await hotel.save();
 
-    const user = await User.findOne({ phone });
-    if (!user) return res.status(404).json({ message: "User not found" });
 
     user.role = "customer";
     user.staffId = null;
@@ -430,5 +431,41 @@ export const deleteStaff = async (req, res, next) => {
     return res.status(200).json({ success: true, message: `${role} removed successfully` });
   } catch (error) {
     return next(errorHandler(500, error.message || "Failed to remove staff"));
+  }
+};
+
+export const updateStaff = async (req, res, next) => {
+  try {
+    const { username, email, phone, role, hotelId, staffID } = req.body;
+
+    if (!username || !email || !phone || !role || !hotelId) {
+      return next(errorHandler(400, "All fields are required"));
+    }
+
+    const hotel = await Hotel.findOne({ hotelId });
+    if (!hotel) return next(errorHandler(404, "Hotel not found"));
+
+    const staffListKey = {
+      chef: "chefs",
+      waiter: "waiters",
+      hall_manager: "hallManagers",
+    }[role];
+
+    const staffList = hotel[staffListKey];
+    const staffIndex = staffList.findIndex((s) => s.staffID === staffID);
+
+    if (staffIndex === -1) {
+      return next(errorHandler(404, "Staff not found"));
+    }
+
+    hotel[staffListKey][staffIndex].name = username;
+    hotel[staffListKey][staffIndex].email = email;
+    hotel[staffListKey][staffIndex].phone = phone;
+
+    await hotel.save();
+
+    res.status(200).json({ success: true, message: "Staff updated successfully" });
+  } catch (error) {
+    next(errorHandler(500, error.message));
   }
 };
