@@ -24,6 +24,8 @@ import WaiterDashboard from "./pages/WaiterDashboard";
 import ViewDishes from "./pages/ViewDishes";
 import ScrollToTop from "./components/ScrollToTop";
 import Search from "./pages/Search";
+import EditStaff from "./pages/EditStaff";
+import EditFood from "./pages/EditFood";
 
 function App() {
   return (
@@ -44,6 +46,8 @@ function App() {
           <Route path="/admin-home" element={<AdminHomePage/>} />
           <Route path="/viewbills" element={<ViewBills/>} />
           <Route path="/viewdishes" element={<ViewDishes/>} />
+          <Route path="/edit-staff/:staffId" element={<EditStaff/>} />
+          <Route path="/admin/edit-dish/:foodId" element={<EditFood />} />
         </Route>
         <Route element={<HallManagerPrivateRoute />}>
           <Route path="/hall-manager-dashboard" element={<HallManagerDashBoard/>} />
