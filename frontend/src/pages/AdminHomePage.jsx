@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Alert, Button, Modal, Table } from "flowbite-react";
+import { useNavigate } from "react-router-dom";
 
 export default function AdminHomePage() {
   const { currentUser } = useSelector((state) => state.user);
@@ -8,6 +9,7 @@ export default function AdminHomePage() {
   const [error, setError] = useState("");
   const [staffToDelete, setStaffToDelete] = useState(null); 
   const [successMsg, setSuccessMsg] = useState("");
+  const navigate = useNavigate();
 
   const roleKeyMap = {
     chef: "chefs",
@@ -83,7 +85,7 @@ export default function AdminHomePage() {
   };
 
   const renderTable = (title, rows) => (
-    <div className="mb-10">
+    <div className="mb-10 overflow-x-auto">
       <h2 className="text-xl font-bold mb-3">{title}</h2>
       <Table hoverable>
         <Table.Head>
@@ -102,9 +104,22 @@ export default function AdminHomePage() {
               <Table.Cell>{staff.email}</Table.Cell>
               <Table.Cell>{staff.phone}</Table.Cell>
               <Table.Cell>{staff.staffID}</Table.Cell>
-              <Table.Cell>{new Date(staff.createdAt).toLocaleDateString()}</Table.Cell>
               <Table.Cell>
-                <span className="text-blue-600 hover:underline cursor-pointer">
+                {new Date(staff.createdAt).toLocaleDateString()}
+              </Table.Cell>
+              <Table.Cell>
+                <span
+                  className="text-blue-600 hover:underline cursor-pointer"
+                  onClick={() =>
+                    navigate(`/edit-staff/${staff.staffID}`, {
+                      state: {
+                        staff,
+                        role: titleToRole[title],
+                        hotelId: currentUser.hotelId,
+                      },
+                    })
+                  }
+                >
                   Edit
                 </span>
               </Table.Cell>
