@@ -3,7 +3,7 @@ import { AiOutlineSearch } from "react-icons/ai";
 import React, { useState } from "react";
 import { Avatar, Button, Dropdown, Navbar, TextInput } from "flowbite-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import ServeSyncLogo from "../assets/ServeSyncLogo.png";
+import ServeSyncLogo from "../assets/ServeSync.png";
 import { useSelector } from "react-redux";
 import { signoutSuccess } from "../redux/user/userSlice.js";
 
@@ -71,7 +71,7 @@ function Header() {
         <img
           src={ServeSyncLogo}
           alt="ServeSync Logo"
-          className="w-auto h-12 rounded-xl"
+          className="w-auto h-14 rounded-lg"
         />
       </button>
 

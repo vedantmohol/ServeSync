@@ -72,7 +72,7 @@ export default function ViewBills() {
           </div>
 
           {Object.keys(billsByMonth).map((monthKey) => (
-            <div key={monthKey} className="mb-10">
+            <div key={monthKey} className="mb-10 overflow-x-auto">
               <h2 className="text-2xl font-bold text-purple-600 mb-4">{monthKey}</h2>
               <Table hoverable>
                 <Table.Head>
