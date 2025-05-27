@@ -7,19 +7,22 @@ import { setCurrentOrder } from '../redux/order/orderSlice';
 export default function FoodCard({ item }){
     const { food, hotelName } = item;
     const [showModal, setShowModal] = useState(false);
+    const [showRoleModal, setShowRoleModal] = useState(false);
     const navigate = useNavigate();
     const { currentUser } = useSelector((state) => state.user);
     const dispatch = useDispatch();
 
     const handleAddToCart = () => {
-        if (!currentUser) {
-          setShowModal(true);
-        } else {
-          dispatch(setCurrentOrder(item))
-          navigate('/cart');
-          setShowModal(false);
-        }
-      };
+      if (!currentUser) {
+        setShowModal(true);
+      } else if (currentUser.role !== "customer") {
+        setShowRoleModal(true);
+      } else {
+        dispatch(setCurrentOrder(item));
+        navigate("/cart");
+        setShowModal(false);
+      }
+    };
 
     return (
         <>
@@ -57,6 +60,22 @@ export default function FoodCard({ item }){
                 Sign In
               </Button>
               <Button color="gray" onClick={() => setShowModal(false)}>
+                Go Back
+              </Button>
+            </div>
+          </div>
+        </Modal.Body>
+      </Modal>
+
+      <Modal show={showRoleModal} onClose={() => setShowRoleModal(false)} size="md" popup>
+        <Modal.Header />
+        <Modal.Body>
+          <div className="text-center">
+            <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
+              You must have a customer login to place an order.
+            </h3>
+            <div className="flex justify-center gap-4">
+              <Button color="gray" onClick={() => setShowRoleModal(false)}>
                 Go Back
               </Button>
             </div>
