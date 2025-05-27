@@ -8,6 +8,7 @@ import hotelRoutes from './routes/hotel.routes.js';
 import orderRoutes from './routes/order.routes.js';
 import commentRoutes from './routes/comment.routes.js';
 import cookieParser from 'cookie-parser';
+import path from 'path';
 
 dotenv.config();
 
@@ -20,6 +21,8 @@ mongoose.connect(process.env.mongoDB_url)
     console.log("Error connecting to database: ",err);
 })
 
+const __dirname = path.resolve();
+
 const app = express();
 
 app.use(express.json());
@@ -31,6 +34,11 @@ app.use("/api/hotel",hotelRoutes);
 app.use("/api/food", foodRoutes);
 app.use("/api/order",orderRoutes);
 app.use("/api/comment",commentRoutes);
+
+app.use(express.static(path.join(__dirname, '/frontend/dist')));
+app.get("*",(req,res)=>{
+    res.sendFile(path.join(__dirname, 'frontend','dist','index.html'));
+});
 
 app.use((err,req,res,next) =>{
     const statusCode = err.statusCode || 500;
