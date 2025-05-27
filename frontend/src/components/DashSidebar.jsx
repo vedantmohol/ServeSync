@@ -152,7 +152,7 @@ function DashSidebar() {
                 </Link>
               </>
             )}
-            {currentUser?.role !== "hotel_admin" && (
+            {currentUser?.role === "customer" && (
               <Sidebar.Item
                 active={tab === "add-hotel"}
                 icon={HiBuildingOffice2}

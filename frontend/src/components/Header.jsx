@@ -188,18 +188,11 @@ function Header() {
 
         {currentUser && currentUser.role === "chef" && (
           <>
-            <Navbar.Link as="div" active={path === "/foodstsock"}>
+            <Navbar.Link as="div" active={path === "/foodstock"}>
               <Link to="/foodstock">
                 <span className="px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg hover:opacity-90 text-white">
                   Food Stock
                 </span>
-              </Link>
-            </Navbar.Link>
-            <Navbar.Link as="div" active={path === "/waiters"}>
-              <Link to="/waiters">
-                <span className="px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg hover:opacity-90 text-white">
-                  Call Waiters
-                </span>{" "}
               </Link>
             </Navbar.Link>
           </>

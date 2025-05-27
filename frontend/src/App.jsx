@@ -26,6 +26,8 @@ import ScrollToTop from "./components/ScrollToTop";
 import Search from "./pages/Search";
 import EditStaff from "./pages/EditStaff";
 import EditFood from "./pages/EditFood";
+import FoodStock from "./pages/FoodStock";
+import UpdateStatus from "./pages/UpdateStatus";
 
 function App() {
   return (
@@ -55,9 +57,11 @@ function App() {
         </Route>
         <Route element={<ChefPrivateRoute />}>
           <Route path="/chef-dashboard" element={<ChefDashBoard/>} />
+          <Route path="/foodstock" element={<FoodStock/>}/>
         </Route>
         <Route element={<WaiterPrivateRoute />}>
           <Route path="/waiter-dashboard" element={<WaiterDashboard/>} />
+          <Route path="/updatestatus" element={<UpdateStatus/>} />
         </Route>
         <Route element={<CustomerPrivateRoute />}>
           <Route path="/cart" element={<Cart/>} />
