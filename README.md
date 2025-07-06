@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://servesync.onrender.com/assets/logo.png" alt="ServeSync Logo" width="300"/>
+  <img src="https://servesync.onrender.com/frontend/src/assets/ServeSync.png" alt="ServeSync Logo" width="300"/>
 </p>
 
 <h1 align="center">🍽️ ServeSync</h1>
@@ -34,31 +34,39 @@
 # 1. Clone the repository
 
 git clone https://github.com/your-username/servesync.git
+
 cd servesync
 
 # 2. Backend setup
 
 cd backend
+
 npm install
+
 Add a .env file in the backend with necessary keys like Mongo URI and Razorpay
 
 # 3. Frontend setup
 
 cd ../frontend
+
 npm install
+
 Add a .env file in frontend with your Razorpay key ID
 
 # 4. Start servers
 
 In backend/
+
 npm run dev
 
 In frontend/
+
 npm run dev
 
 ---
 
 ## 📁 API Base URL
+
 https://servesync.onrender.com/api
 
 ---
@@ -137,12 +145,13 @@ https://servesync.onrender.com/api
 | PATCH  | `/editComment/:commentId`   | Edit comment (auth required)   |
 | DELETE | `/deleteComment/:commentId` | Delete comment (auth required) |
 
+--- 
 
 ## 📌 Notes
--Role-based access for admin and customers
--Orders automatically assigned to staff
--Auto GST based on staff count
--Bill summary includes: subtotal, GST, grand total
--Razorpay test UPI flow works smoothly
+- Role-based access for admin and customers
+- Orders automatically assigned to staff
+- Auto GST based on staff count
+- Bill summary includes: subtotal, GST, grand total
+- Razorpay test UPI flow works smoothly
 
 <p align="center"> Made with 💜 by Vedant Mohol </p>
